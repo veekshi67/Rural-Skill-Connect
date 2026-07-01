@@ -40,11 +40,6 @@ Many skilled rural workers lack digital visibility and struggle to find nearby j
 
 ---
 
-## 📷 Screenshots
-
-(Add screenshots here)
-
----
 
 ## 👩‍💻 Developed By
 
