@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rural Skill Connect — Others (Improved UI)</title>
+
+<!-- Use your main stylesheet if you want; core styling below is self-contained -->
+<style>
+  :root{
+    --bg1: #f5fbff;
+    --bg2: #fff7fb;
+    --card: #ffffff;
+    --accent: #0077ff;
+    --accent-2: #ff6a00;
+    --muted: #647b8a;
+    --success: #00a86b;
+    --danger: #d9534f;
+    --glass: rgba(255,255,255,0.7);
+  }
+  html,body{ height:100%; margin:0; font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: linear-gradient(135deg,var(--bg1), #e9fff7 60%); color:#153241; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .page { max-width:1200px; margin:18px auto; padding:20px; }
+  header.top {
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:18px;
+  }
+  .brand { display:flex; gap:14px; align-items:center; }
+  .brand .logo {
+    width:72px; height:72px; border-radius:18px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg,#ffffff,#eaf7ff); box-shadow:0 10px 30px rgba(2,40,80,0.06);
+    font-size:36px;
+  }
+  .brand h1 { margin:0; font-size:22px; letter-spacing:-0.2px; color:#063b9a; }
+  .brand p { margin:2px 0 0; color:var(--muted); font-size:13px; }
+
+  .controls { display:flex; gap:10px; align-items:center; }
+  .btn {
+    background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;
+    box-shadow:0 8px 22px rgba(0,119,255,0.12); transition:transform .12s ease, box-shadow .12s;
+  }
+  .btn:hover{ transform:translateY(-3px); }
+  .btn.ghost { background:transparent; color:#063b9a; border:1px solid rgba(6,59,154,0.08); box-shadow:none; font-weight:700; }
+  .lang-toggle { padding:8px 10px; border-radius:8px; background:linear-gradient(90deg,#fff,#f6fbff); border:1px solid rgba(2,36,85,0.06); cursor:pointer; font-weight:700; }
+
+  /* layout grid */
+  .grid {
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:18px;
+    align-items:start;
+  }
+
+  /* left column cards */
+  .left-col { display:flex; flex-direction:column; gap:16px; }
+  .card {
+    background:var(--card); border-radius:14px; padding:16px; box-shadow:0 16px 40px rgba(6,30,76,0.06);
+    overflow:hidden;
+  }
+  .card .card-head { display:flex; align-items:center; gap:12px; }
+  .icon-circle { width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; background:linear-gradient(135deg,#fff,#f4fbff); box-shadow:0 8px 20px rgba(2,36,85,0.04); }
+  h2 { margin:0; font-size:18px; color:#063b9a; }
+  .desc { color:var(--muted); margin-top:6px; font-size:13px; }
+
+  .card-body { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+  .input, select, textarea { width:100%; padding:10px; border-radius:10px; border:1px solid #e6f0f9; font-size:14px; box-sizing:border-box; }
+  textarea { min-height:80px; resize:vertical; }
+
+  .list { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .list-item { display:flex; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; background:linear-gradient(180deg,#fff,#fbfeff); border:1px solid rgba(2,36,85,0.03); align-items:center; }
+  .meta { color:var(--muted); font-size:13px; }
+  .actions { display:flex; gap:8px; }
+
+  /* right column small cards */
+  .right-col { display:flex; flex-direction:column; gap:16px; }
+  .small-card { background:linear-gradient(180deg,#ffffff,#fffaf6); padding:12px; border-radius:12px; box-shadow:0 12px 30px rgba(6,30,76,0.04); }
+
+  /* nice badges */
+  .badge { padding:6px 8px; border-radius:8px; font-weight:800; font-size:12px; background:linear-gradient(90deg,#f0f9ff,#e7f7ff); color:#024a8a; border:1px solid rgba(2,36,85,0.04); }
+
+  /* footer note */
+  .note { margin-top:12px; color:var(--muted); font-size:13px; }
+
+  /* responsive */
+  @media (max-width:980px){ .grid { grid-template-columns: 1fr; } .controls { flex-wrap:wrap; } .brand .logo { width:60px; height:60px; font-size:32px; } }
+
+  /* subtle animations */
+  .fade-in { animation:fadeUp .32s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none; } }
+
+  /* highlight important CTA */
+  .cta { background:linear-gradient(90deg,var(--accent), #005ad1); color:#fff; padding:10px 14px; border-radius:10px; font-weight:800; border:none; cursor:pointer; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">📣</div>
+        <div>
+          <h1 id="pageTitle">Others</h1>
+          <p id="pageSubtitle">Announcements • Learn Skills • Smart Match • Offline Mode</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="homeBtn" class="btn ghost" title="Home">← Home</button>
+        <button id="teluguBtn" class="lang-toggle" title="Toggle Telugu">తెలుగు</button>
+        <button id="englishBtn" class="lang-toggle" title="Toggle English">English</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="left-col">
+
+        <!-- Announcements -->
+        <section class="card fade-in" id="annCard">
+          <div class="card-head">
+            <div class="icon-circle">📰</div>
+            <div>
+              <h2 id="annTitle">Local Announcements</h2>
+              <div id="annDesc" class="desc">Village notices, health camps, meetings. Add short, clear announcements for everyone.</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge" id="annBadge">2 live</span></div>
+          </div>
+
+          <div class="card-body">
+            <input id="annTitleInput" class="input" placeholder="Title (e.g. Free health camp - 15 Dec)" />
+            <textarea id="annText" class="input" placeholder="Details: Date, time, location..."></textarea>
+            <div style="display:flex; gap:10px;">
+              <button id="addAnnBtn" class="btn cta">Add Announcement</button>
+              <button id="clearAnnBtn" class="btn ghost">Clear All</button>
+            </div>
+
+            <div id="annList" class="list" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- Learn Skills -->
+        <section class="card fade-in" id="learnCard">
+          <div class="card-head">
+            <div class="icon-circle">🎓</div>
+            <div>
+              <h2 id="learnTitle">Learn Skills</h2>
+              <div id="learnDesc" class="desc">Short practical courses and local teachers. Tap to view syllabus and masked contact.</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Courses</span></div>
+          </div>
+
+          <div class="card-body">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <label for="courseFilter" class="meta" style="margin:0;">Category</label>
+              <select id="courseFilter" style="flex:1;" class="input">
+                <option value="all">All</option><option value="agri">Agriculture</option><option value="handicraft">Handicraft</option><option value="mechanic">Mechanic</option>
+              </select>
+              <button id="refreshCourses" class="btn ghost">Refresh</button>
+            </div>
+
+            <div id="courseList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- Smart Match -->
+        <section class="card fade-in" id="matchCard">
+          <div class="card-head">
+            <div class="icon-circle">🔎</div>
+            <div>
+              <h2 id="matchTitle">Smart Match</h2>
+              <div id="matchDesc" class="desc">Suggests local workers for a job using skill, experience and price filters.</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Auto-match</span></div>
+          </div>
+
+          <div class="card-body">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:160px;">
+                <label class="meta">Job skill</label>
+                <select id="jobSkill" class="input"></select>
+              </div>
+              <div style="width:140px;">
+                <label class="meta">Min exp (yrs)</label>
+                <select id="jobExp" class="input"></select>
+              </div>
+              <div style="width:140px;">
+                <label class="meta">Max rate (₹)</label>
+                <input id="priceMax" class="input" type="number" placeholder="e.g. 1000" />
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <button id="runMatchBtn" class="btn">Run Match</button>
+              <button id="showAllWorkers" class="btn ghost">Show all workers</button>
+            </div>
+
+            <div id="matchResults" class="list" style="margin-top:10px;"></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT -->
+      <aside class="right-col">
+
+        <!-- Offline Mode -->
+        <div class="small-card fade-in" id="offlineCard">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="icon-circle" style="width:56px;height:56px;font-size:20px;">📥</div>
+            <div>
+              <h3 style="margin:0; color:#063b9a;">Offline Mode</h3>
+              <div class="desc" style="margin-top:6px;">Save drafts offline and sync when the network is available.</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <label class="meta">Draft type</label>
+            <select id="draftType" class="input"><option value="skill">Skill Post</option><option value="job">Job Post</option><option value="announcement">Announcement</option></select>
+            <label class="meta">Draft content</label>
+            <textarea id="draftText" class="input" placeholder="Write small draft..."></textarea>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button id="saveDraftBtn" class="btn cta">Save Draft</button>
+              <button id="syncBtn" class="btn ghost">Sync Now</button>
+            </div>
+            <div id="draftQueue" class="list" style="margin-top:12px;"></div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+
+<!-- Shared safe stub will be loaded by the page; keep it present to avoid errors -->
+<script>
+  // ---------- Demo data (robust) ----------
+  const SAMPLE = {
+    announcements: [
+      { id:'a1', title:'Free health camp', text:'Free eye & dental checkup at community hall on 2025-12-15 at 10:00 AM.' , date:'2025-12-10' },
+      { id:'a2', title:'Farmers meeting', text:'Farmers meeting about winter crop planning on 2025-12-20 at 9:30 AM.' , date:'2025-12-12' }
+    ],
+    courses: [
+      { id:'c1', cat:'agri', title:'Tractor Basics (2 days)', teacher:'S. Reddy', contact:'+91-98*****123', syllabus:'Controls, safety, maintenance' },
+      { id:'c2', cat:'handicraft', title:'Stitching & Tailoring (5 days)', teacher:'Lalitha', contact:'+91-97*****234', syllabus:'Measurements, patterns, finish' },
+      { id:'c3', cat:'mechanic', title:'Pump Repair (1 day)', teacher:'Anil', contact:'+91-96*****345', syllabus:'Pump faults and fixes' }
+    ],
+    workers: [
+      { id:'w1', name:'Raju', skills:['masonry','painting'], exp:5, rate:800, phone:'+91-98*****111' },
+      { id:'w2', name:'Sita', skills:['sewing','tailoring'], exp:3, rate:300, phone:'+91-98*****222' },
+      { id:'w3', name:'Balu', skills:['plumbing','electrician'], exp:7, rate:1200, phone:'+91-97*****333' },
+      { id:'w4', name:'Radha', skills:['carpentry'], exp:2, rate:500, phone:'+91-96*****444' },
+      { id:'w5', name:'Murali', skills:['tractor-driving','land-prep'], exp:10, rate:1500, phone:'+91-95*****555' }
+    ],
+    demo_skills: ['masonry','tiling','plumbing','electrician','sewing','tailoring','carpentry','painting','tractor-driving','land-prep'],
+    demo_exp: [0.5,1,2,3,4,5,7,10,15]
+  };
+
+  // ---------- Translation strings ----------
+  const L10N = {
+    en: {
+      pageTitle: 'Others',
+      pageSubtitle: 'Announcements • Learn Skills • Smart Match • Offline Mode',
+      annTitle: 'Local Announcements',
+      annDesc: 'Village notices, health camps, meetings. Add short, clear announcements for everyone.',
+      learnTitle: 'Learn Skills',
+      learnDesc: 'Short practical courses and local teachers. Tap to view syllabus and masked contact.',
+      matchTitle: 'Smart Match',
+      matchDesc: 'Suggests local workers for a job using skill, experience and price filters.',
+      offlineTitle: 'Offline Mode',
+      addAnnouncement: 'Add Announcement',
+      clearAll: 'Clear All',
+      saveDraft: 'Save Draft',
+      syncNow: 'Sync Now'
+    },
+    te: {
+      pageTitle: 'ఇతరాలు',
+      pageSubtitle: 'అంగన్వాడీ • నైపుణ్యాలు నేర్చుకోండి • స్మార్ట్ మ్యాచ్ • ఆఫ్‌లైన్ మోడ్',
+      annTitle: 'స్థానిక ప్రకటనలు',
+      annDesc: 'గుట్టు, ఆరోగ్య శిబిరాలు, శుభ్రత సమావేశాలు—సంపూర్ణంగా క్లియర్ ప్రకటనలు పెట్టండి.',
+      learnTitle: 'నైపుణ్యాలు నేర్పండి',
+      learnDesc: 'చిక్కటి శిక్షణలు మరియు స్థానిక ఉపాధ్యాయులు. సిలబస్ మరియు సంకేతాన్ని చూడండి.',
+      matchTitle: 'స్మార్ట్ మ్యాచ్',
+      matchDesc: 'కౌశలం, అనుభవం మరియు ధర ఆధారంగా స్థానిక కార్మికులను సూచిస్తుంది.',
+      offlineTitle: 'ఆఫ్‌లైన్ మోడ్',
+      addAnnouncement: 'ప్రకటన జోడించండి',
+      clearAll: 'అన్ని తీసివేయండి',
+      saveDraft: 'డ్రాఫ్ట్ సేవ్ చేయండి',
+      syncNow: 'ఇప్పుడు సింక్ చేయండి'
+    }
+  };
+
+  // ---------- Small utilities ----------
+  const $ = id => document.getElementById(id);
+  function uid(prefix='id'){ return prefix + Date.now() + Math.floor(Math.random()*900); }
+  function store(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+  function read(key, fallback){ try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch(e){ return fallback; } }
+  function maskPhone(p){ if(!p) return '—'; const d = p.replace(/\D/g,''); if(d.length<=6) return d; return d.slice(0,3) + '****' + d.slice(-2); }
+  function csvDownload(filename, text){ const blob = new Blob([text], {type:'text/csv'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+
+  // ---------- Ensure demo data exists ----------
+  function ensureDemo(){
+    if(!localStorage.getItem('rsc_announcements')) store('rsc_announcements', SAMPLE.announcements);
+    if(!localStorage.getItem('rsc_learn_courses')) store('rsc_learn_courses', SAMPLE.courses);
+    if(!localStorage.getItem('rsc_workers_sample')) store('rsc_workers_sample', SAMPLE.workers);
+    if(!localStorage.getItem('rsc_demo_skills')) store('rsc_demo_skills', SAMPLE.demo_skills);
+    if(!localStorage.getItem('rsc_demo_exp')) store('rsc_demo_exp', SAMPLE.demo_exp);
+    if(!localStorage.getItem('rsc_draft_queue')) store('rsc_draft_queue', []);
+  }
+
+  // ---------- Renderers ----------
+  function renderAnnouncements(){
+    const list = read('rsc_announcements', []);
+    $('annList').innerHTML = list.length ? list.map(a=>`
+      <div class="list-item">
+        <div style="flex:1">
+          <div style="font-weight:800">${a.title}</div>
+          <div class="meta">${a.date || ''}</div>
+          <div style="margin-top:6px; color:var(--muted);">${a.text}</div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" onclick="editAnn('${a.id}')">Edit</button>
+          <button class="btn ghost" onclick="removeAnn('${a.id}')">Remove</button>
+        </div>
+      </div>
+    `).join('') : `<div class="muted">No announcements.</div>`;
+    $('annBadge').textContent = list.length + ' live';
+  }
+
+  function renderCourses(filter='all'){
+    const list = read('rsc_learn_courses', []);
+    const filtered = filter === 'all' ? list : list.filter(c=>c.cat===filter);
+    $('courseList').innerHTML = filtered.length ? filtered.map(c=>`
+      <div class="list-item">
+        <div style="flex:1">
+          <div style="font-weight:800">${c.title}</div>
+          <div class="meta">Teacher: ${c.teacher} • Contact: ${maskPhone(c.contact)}</div>
+          <div style="margin-top:6px; color:var(--muted)">${c.syllabus}</div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="viewCourse('${c.id}')">View</button>
+        </div>
+      </div>
+    `).join('') : `<div class="muted">No courses found.</div>`;
+  }
+
+  function renderMatchPickers(){
+    const skills = read('rsc_demo_skills', []);
+    $('jobSkill').innerHTML = skills.map(s=>`<option value="${s}">${s}</option>`).join('');
+    const exps = read('rsc_demo_exp', []);
+    $('jobExp').innerHTML = exps.map(e=>`<option value="${e}">${e}</option>`).join('');
+  }
+
+  function renderDraftQueue(){
+    const q = read('rsc_draft_queue', []);
+    $('draftQueue').innerHTML = q.length ? q.map(d=>`
+      <div class="list-item">
+        <div style="flex:1">
+          <div style="font-weight:800">${d.type}</div>
+          <div class="meta">${new Date(d.created).toLocaleString()}</div>
+          <div style="margin-top:6px; color:var(--muted)">${d.text}</div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" onclick="removeDraft('${d.id}')">Remove</button>
+        </div>
+      </div>
+    `).join('') : `<div class="muted">No drafts queued.</div>`;
+  }
+
+  function renderMatches(skill, exp, price){
+    const workers = read('rsc_workers_sample', []);
+    const matched = workers.filter(w=> w.skills.includes(skill) && w.exp >= exp && w.rate <= price);
+    if(!matched.length) {
+      $('matchResults').innerHTML = '<div class="muted">No matches. Try increasing max rate or lowering experience.</div>';
+      return;
+    }
+    $('matchResults').innerHTML = matched.map(m=>`
+      <div class="list-item">
+        <div style="flex:1">
+          <div style="font-weight:800">${m.name}</div>
+          <div class="meta">${m.skills.join(', ')} • ${m.exp} yrs • ₹${m.rate}</div>
+          <div style="margin-top:6px; color:var(--muted)">Contact: ${maskPhone(m.phone)}</div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="requestWorker('${m.id}')">Request</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---------- Actions (add, edit, remove) ----------
+  window.editAnn = function(id){
+    const list = read('rsc_announcements', []);
+    const a = list.find(x=>x.id===id); if(!a) return alert('Not found');
+    $('annTitleInput').value = a.title; $('annText').value = a.text;
+    store('rsc_announcements', list.filter(x=>x.id!==id));
+    renderAnnouncements();
+  };
+
+  window.removeAnn = function(id){ store('rsc_announcements', read('rsc_announcements', []).filter(x=>x.id!==id)); renderAnnouncements(); };
+
+  $('addAnnBtn').addEventListener('click', ()=>{
+    const title = $('annTitleInput').value.trim(), text = $('annText').value.trim();
+    if(!title || !text) return alert('Enter title and details');
+    const list = read('rsc_announcements', []);
+    list.unshift({ id: uid('ann_'), title, text, date: new Date().toISOString().slice(0,10) });
+    store('rsc_announcements', list);
+    $('annTitleInput').value=''; $('annText').value='';
+    renderAnnouncements();
+  });
+
+  $('clearAnnBtn').addEventListener('click', ()=>{
+    if(!confirm('Clear all announcements?')) return;
+    store('rsc_announcements', []); renderAnnouncements();
+  });
+
+  window.viewCourse = function(id){
+    const list = read('rsc_learn_courses', []);
+    const c = list.find(x=>x.id===id); if(!c) return alert('Course not found');
+    alert(`${c.title}\nTeacher: ${c.teacher}\nContact: ${maskPhone(c.contact)}\n\nSyllabus:\n${c.syllabus}`);
+  };
+
+  $('courseFilter').addEventListener('change', ()=> renderCourses($('courseFilter').value));
+  $('refreshCourses').addEventListener('click', ()=> renderCourses($('courseFilter').value));
+
+  // Smart match actions
+  $('runMatchBtn').addEventListener('click', ()=> {
+    const skill = $('jobSkill').value, exp = Number($('jobExp').value||0), price = Number($('priceMax').value||9999999);
+    renderMatches(skill, exp, price);
+  });
+  $('showAllWorkers').addEventListener('click', ()=> {
+    const workers = read('rsc_workers_sample', []);
+    $('matchResults').innerHTML = workers.map(m=>`
+      <div class="list-item"><div style="flex:1"><div style="font-weight:800">${m.name}</div><div class="meta">${m.skills.join(', ')} • ${m.exp} yrs • ₹${m.rate}</div><div style="margin-top:6px;color:var(--muted)">Contact: ${maskPhone(m.phone)}</div></div></div>
+    `).join('');
+  });
+
+  window.requestWorker = function(workerId){
+    const workers = read('rsc_workers_sample', []);
+    const w = workers.find(x=>x.id===workerId); if(!w) return alert('Worker not found');
+    const requests = read('rsc_match_requests', []);
+    requests.unshift({ id: uid('req_'), workerId: w.id, requestedAt: Date.now(), status:'requested' });
+    store('rsc_match_requests', requests);
+    alert('Request created (demo). Worker contact is masked for safety.');
+  };
+
+  // Offline drafts
+  $('saveDraftBtn').addEventListener('click', ()=>{
+    const type = $('draftType').value, text = $('draftText').value.trim();
+    if(!text) return alert('Enter draft content');
+    const q = read('rsc_draft_queue', []);
+    q.unshift({ id: uid('draft_'), type, text, created: Date.now() });
+    store('rsc_draft_queue', q);
+    $('draftText').value = '';
+    renderDraftQueue();
+    alert('Saved draft locally (offline).');
+  });
+
+  window.removeDraft = function(id){
+    const q = read('rsc_draft_queue', []).filter(x=>x.id!==id);
+    store('rsc_draft_queue', q);
+    renderDraftQueue();
+  };
+
+  $('syncBtn').addEventListener('click', ()=>{
+    const q = read('rsc_draft_queue', []); if(!q.length) return alert('No drafts to sync.');
+    const synced = read('rsc_synced_demo', []); q.forEach(d=> synced.unshift(Object.assign({}, d, { syncedAt: Date.now() })));
+    store('rsc_synced_demo', synced); store('rsc_draft_queue', []); renderDraftQueue(); alert('Sync simulated: drafts moved to server (demo).');
+  });
+
+  // ---------- Language toggle ----------
+  function applyLang(lang){
+    const dict = L10N[lang] || L10N.en;
+    $('pageTitle').textContent = dict.pageTitle;
+    $('pageSubtitle').textContent = dict.pageSubtitle;
+    $('annTitle').textContent = dict.annTitle;
+    $('annDesc').textContent = dict.annDesc;
+    $('learnTitle').textContent = dict.learnTitle;
+    $('learnDesc').textContent = dict.learnDesc;
+    $('matchTitle').textContent = dict.matchTitle;
+    $('matchDesc').textContent = dict.matchDesc;
+    // button texts
+    $('addAnnBtn').textContent = dict.addAnnouncement || 'Add Announcement';
+    $('clearAnnBtn').textContent = dict.clearAll || 'Clear All';
+    $('saveDraftBtn').textContent = dict.saveDraft || 'Save Draft';
+    $('syncBtn').textContent = dict.syncNow || 'Sync Now';
+    // store selection for persistence
+    localStorage.setItem('rsc_ui_lang', lang);
+  }
+
+  $('teluguBtn').addEventListener('click', ()=> applyLang('te'));
+  $('englishBtn').addEventListener('click', ()=> applyLang('en'));
+
+  // ---------- bootstrap / init ----------
+  function renderAll(){
+    ensureDemo();
+    renderAnnouncements();
+    renderCourses($('courseFilter')?.value || 'all');
+    renderMatchPickers();
+    renderDraftQueue();
+    // initial language
+    const lang = localStorage.getItem('rsc_ui_lang') || 'en';
+    applyLang(lang);
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=> {
+    renderAll();
+    // quick keyboard shortcuts for demo: H=home, L=telugu
+    document.addEventListener('keydown', (e)=> {
+      if(e.key === 'H') location.href='home.html';
+      if(e.key === 'L') applyLang('te');
+    });
+    // safety: expose RSC.applyLangToPage if shared stub expects it
+    if(window.RSC && typeof window.RSC.applyLangToPage !== 'function'){
+      window.RSC.applyLangToPage = function(){ const lang = localStorage.getItem('rsc_ui_lang')||'en'; applyLang(lang); };
+    }
+  });
+</script>
+<!-- LANGUAGE WIRING SCRIPT -->
+<script>
+  (function(){
+    function log(...a){ console.log('[RSC-LANG]', ...a); }
+
+    // wire buttons if exist
+    const tel = document.getElementById('teluguBtn');
+    const eng = document.getElementById('englishBtn');
+
+    if(tel) tel.addEventListener('click', ()=> { 
+        if(window.RSC && RSC.setLang) RSC.setLang('te'); 
+        log('Set lang te'); 
+    });
+
+    if(eng) eng.addEventListener('click', ()=> { 
+        if(window.RSC && RSC.setLang) RSC.setLang('en'); 
+        log('Set lang en'); 
+    });
+
+    // apply translation after load
+    setTimeout(()=>{ 
+        if(window.RSC && RSC.applyLangToPage) RSC.applyLangToPage(); 
+        log('Lang applied'); 
+    }, 250);
+  })();
+</script>
+
+<script>
+  (function(){
+    // Go to home page (adjust path if your home file name is different)
+    function goHome(){
+      try { window.location.href = 'home.html'; } catch(e){ console.warn('goHome error', e); }
+    }
+
+    // 1) Prefer explicit id
+    const byId = document.getElementById('homeBtn') || document.getElementById('homeIndexBtn');
+    if (byId) {
+      byId.addEventListener('click', goHome);
+      byId.style.cursor = 'pointer';
+      byId.setAttribute('role','link');
+      byId.setAttribute('aria-label','Home');
+      console.log('[RSC] home button wired by id');
+      return;
+    }
+
+    // 2) Fallback: find button or link with "Home" or left-arrow text
+    const candidates = Array.from(document.querySelectorAll('button, a'));
+    let wired = false;
+    candidates.forEach(el => {
+      const t = (el.innerText || '').trim();
+      if (!t) return;
+      // match common variations: "Home", "← Home", "Login" arrow etc.
+      if (/^\s*←\s*Home$/i.test(t) || /\bHome\b/i.test(t) || /^\s*←\s*$/i.test(t)) {
+        el.addEventListener('click', goHome);
+        el.style.cursor = 'pointer';
+        el.setAttribute('role','link');
+        el.setAttribute('aria-label','Home');
+        wired = true;
+      }
+    });
+
+    if (wired) {
+      console.log('[RSC] home button wired by text match');
+    } else {
+      console.warn('[RSC] home button not found automatically. To make it permanent, add id="homeBtn" to the Home button in others.html');
+    }
+
+    // 3) accessibility / shortcut: press H to go Home
+    document.addEventListener('keydown', (e) => {
+      // ignore when typing in inputs
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'H' || e.key === 'h') goHome();
+    });
+  })();
+</script>
+
+</body>
+</html>

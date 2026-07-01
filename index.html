@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rural Skill Connect - Login</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* small overrides specific to index page for stronger title */
+    .app-title {
+      color: #003d99;
+      font-size: 30px;
+      margin: 6px 0 2px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.03);
+    }
+    .app-accent {
+      display:inline-block;
+      background: linear-gradient(90deg,#ffca28,#ff7043);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight:900;
+    }
+    .app-sub {
+      color:#38516a;
+      margin-bottom:14px;
+      font-size:15px;
+    }
+    /* enlarge input and button for easier tap for low-literacy users */
+    input[type="tel"] { font-size:18px; padding:14px; }
+    .primary-btn { padding:14px; font-size:17px; border-radius:12px; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card" role="main" aria-labelledby="rsc-title" aria-describedby="rsc-desc">
+    <div class="logo" aria-hidden="true">🌾</div>
+
+    <!-- Strong, highlighted project name -->
+    <h1 id="rsc-title" class="app-title"><span class="app-accent">Rural</span> Skill Connect</h1>
+
+    <!-- Simple, clear description -->
+    <p id="rsc-desc" class="app-sub" data-i18n="app_description">
+      Connect local skilled workers with nearby customers — fast, secure, and easy to use.
+    </p>
+
+    <!-- hidden dummy fields to discourage browser autofill -->
+    <form autocomplete="off" aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+      <input type="text" name="fakeusernameremembered" autocomplete="off">
+      <input type="password" name="fakepasswordremembered" autocomplete="off">
+    </form>
+
+    <label class="label" for="phoneInput">Phone Number</label>
+    <input id="phoneInput" name="phone-rsc" type="tel" autocomplete="off" inputmode="tel" placeholder="+91 9XXXXXXXXX" aria-label="Phone number">
+
+    <button id="sendOtpBtn" class="primary-btn" aria-describedby="rsc-desc">Send OTP</button>
+
+    <p id="errorBox" class="error" role="alert" aria-live="polite"></p>
+
+    <div class="test-box" aria-hidden="false">
+      <b>Test Numbers:</b><br>
+      Phone: +919999888877<br>
+      OTP: 123456
+    </div>
+
+    <!-- invisible reCAPTCHA container -->
+    <div id="recaptcha-container" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- OTP Modal -->
+  <div id="otp-modal" class="otp-modal" aria-hidden="true">
+    <div class="otp-card" role="dialog" aria-modal="true" aria-labelledby="otpTitle">
+      <button id="otpCloseBtn" class="otp-close" title="Close" aria-label="Close OTP dialog">✕</button>
+      <h3 id="otpTitle">Enter OTP</h3>
+      <p class="small">OTP sent to <b class="otp-phone"></b></p>
+      <input id="otpInput" type="text" maxlength="6" placeholder="Enter OTP" autocomplete="one-time-code" inputmode="numeric" aria-label="OTP input">
+      <p id="otpError" class="otp-error" role="alert" aria-live="assertive"></p>
+      <button id="otpConfirmBtn" class="btn-confirm">Verify</button>
+    </div>
+  </div>
+
+  <!-- toast for success -->
+  <div id="rsc-toast" class="rsc-toast" aria-live="polite" role="status" hidden>
+    <strong id="rsc-toast-title">Success</strong>
+    <div id="rsc-toast-message">Logged in successfully</div>
+  </div>
+
+  <!-- Firebase v8 libraries (namespaced API) - MUST be before config.js -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <!-- Your config and auth code (config.js must expose window.auth) -->
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

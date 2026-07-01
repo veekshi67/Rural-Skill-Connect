@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rural Skill Connect — For Workers</title>
+
+<style>
+  :root{
+    --bgA:#f5fbff;
+    --bgB:#fff7f2;
+    --card:#ffffff;
+    --accent:#0066ff;
+    --accent2:#ff6a00;
+    --muted:#586973;
+  }
+  html,body{ height:100%; margin:0; font-family:Poppins, Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: linear-gradient(135deg,var(--bgA), #fffaf6 60%); color:#102b44; -webkit-font-smoothing:antialiased; }
+  .page{ max-width:1180px; margin:18px auto; padding:20px; }
+  header.top{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+  .brand{ display:flex; gap:14px; align-items:center; }
+  .logo{ width:72px; height:72px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:32px; background:linear-gradient(135deg,#fff,#f0f8ff); box-shadow:0 12px 36px rgba(3,50,100,0.06); }
+  .brand h1{ margin:0; font-size:22px; color:#04306a; }
+  .brand p{ margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+  .controls{ display:flex; gap:10px; align-items:center; }
+  .btn{ background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; box-shadow:0 8px 22px rgba(0,102,255,0.12); transition:transform .12s ease; }
+  .btn:hover{ transform:translateY(-3px); }
+  .btn.ghost{ background:transparent; color:#04306a; border:1px solid rgba(4,48,106,0.08); }
+  .lang-toggle{ padding:8px 10px; border-radius:8px; background:linear-gradient(90deg,#fff,#fff6f2); border:1px solid rgba(255,106,0,0.08); cursor:pointer; font-weight:700; color:var(--accent2); }
+
+  .grid{ display:grid; grid-template-columns: 1fr 420px; gap:18px; align-items:start; }
+
+  .left-col{ display:flex; flex-direction:column; gap:16px; }
+  .card{ background:var(--card); border-radius:14px; padding:16px; box-shadow:0 16px 40px rgba(6,30,76,0.06); overflow:hidden; }
+  .card-head{ display:flex; align-items:center; gap:12px; }
+  .icon-circle{ width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; background:linear-gradient(135deg,#fff,#fff7f2); box-shadow:0 8px 20px rgba(4,48,106,0.04); }
+  h2{ margin:0; font-size:18px; color:#053b76; }
+  .desc{ color:var(--muted); margin-top:6px; font-size:13px; }
+
+  .card-body{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+  .input, select, textarea{ width:100%; padding:10px; border-radius:10px; border:1px solid #eef6fb; font-size:14px; box-sizing:border-box; background:linear-gradient(180deg,#fff,#fbfeff); }
+  textarea{ min-height:80px; }
+
+  .row{ display:flex; gap:10px; align-items:center; }
+  .list{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+  .list-item{ display:flex; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; background:linear-gradient(180deg,#ffffff,#fffaf7); border:1px solid rgba(4,48,106,0.03); align-items:center; }
+  .meta{ color:var(--muted); font-size:13px; }
+  .actions{ display:flex; gap:8px; }
+
+  .right-col{ display:flex; flex-direction:column; gap:16px; }
+  .small-card{ background:linear-gradient(180deg,#fff,#fff7f2); padding:12px; border-radius:12px; box-shadow:0 12px 30px rgba(6,30,76,0.04); }
+  .badge{ padding:6px 8px; border-radius:8px; font-weight:800; font-size:12px; color:#b94a00; background:linear-gradient(90deg,#fff3ea,#fff0e6); border:1px solid rgba(255,106,0,0.06); }
+  .note{ margin-top:10px; color:var(--muted); font-size:13px; }
+
+  @media (max-width:980px){ .grid{ grid-template-columns:1fr; } header.top{ flex-direction:column; align-items:flex-start; gap:12px; } .logo{ width:56px; height:56px; font-size:26px; } }
+
+  .accent2{ background:linear-gradient(90deg,var(--accent2), #ff8a3d); color:#fff; border:none; padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; }
+  .fade{ animation:fadeUp .28s ease both; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none; } }
+
+  /* ===== Secure Calls & Messages: Collapsible (Option C) styles ===== */
+  #commWrapper { margin-top:8px; --muted:#6b7a86; }
+  #commCard { background:linear-gradient(180deg,#fff,#fffaf7); border-radius:12px; padding:12px; box-shadow:0 18px 40px rgba(6,30,76,0.06); }
+
+  /* Use native details/summary but style it */
+  #commCard details { border-radius:10px; margin-bottom:10px; overflow:hidden; border:1px solid rgba(2,36,85,0.03); background:linear-gradient(90deg,#fff,#fff); }
+  #commCard summary { list-style:none; cursor:pointer; padding:12px 14px; display:flex; align-items:center; gap:12px; font-weight:800; color:#053b76; background:linear-gradient(90deg,#fbfdff,#fffaf7); }
+  #commCard summary::-webkit-details-marker { display:none; }
+
+  /* Calls summary header style */
+  .calls-summary { display:flex; align-items:center; gap:12px; width:100%; }
+  .calls-avatar{ width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; background:linear-gradient(90deg,#2b6cff,#7dd3fc); font-weight:900; box-shadow:0 8px 20px rgba(2,36,85,0.06); }
+  .calls-meta { min-width:0; }
+  .calls-name { font-weight:900; color:#053b76; font-size:15px; }
+  .calls-id { font-size:12px; color:var(--muted); }
+
+  .calls-body { padding:12px 14px; display:flex; gap:10px; align-items:center; }
+  .calls-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+
+  /* Chats summary header */
+  .chats-summary { display:flex; align-items:center; gap:10px; width:100%; }
+  .chats-title { font-weight:900; color:#053b76; }
+
+  /* Chat content */
+  .chats-body { padding:12px 14px; display:flex; gap:10px; align-items:flex-start; flex-direction:column; }
+  .chats-inner { display:grid; grid-template-columns: 180px 1fr; gap:10px; width:100%; }
+  .conv-list { max-height:220px; overflow:auto; padding-right:6px; }
+  .conv-item { display:flex; gap:10px; align-items:center; padding:8px; border-radius:8px; cursor:pointer; transition:background .12s; }
+  .conv-item:hover{ background:#f1f8ff; transform:translateX(2px); }
+  .conv-item.active{ background:linear-gradient(90deg,#eef6ff,#fff); box-shadow: inset 0 0 0 1px rgba(6,30,76,0.04); }
+  .conv-avatar{ width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#063b9a; font-weight:800; background:#eef6ff; }
+
+  .thread { min-height:140px; max-height:220px; overflow:auto; padding:8px; background:transparent; border-radius:8px; }
+  .bubble { max-width:78%; padding:10px 12px; border-radius:14px; box-shadow:0 8px 20px rgba(2,36,85,0.04); position:relative; }
+  .bubble.me { margin-left:auto; background:linear-gradient(90deg,#e6f0ff,#eaf8ff); border-bottom-right-radius:4px; }
+  .bubble.them { margin-right:auto; background:#fff; border:1px solid rgba(2,36,85,0.04); border-bottom-left-radius:4px; }
+  .bubble .ts { display:block; font-size:11px; color:#7a8793; margin-top:6px; text-align:right; }
+
+  .composer { display:flex; gap:8px; margin-top:8px; align-items:center; }
+  .composer input[type="text"]{ flex:1; padding:10px 12px; border-radius:999px; border:1px solid rgba(2,36,85,0.06); }
+  .send-btn{ background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:999px; cursor:pointer; font-weight:800; box-shadow:0 8px 22px rgba(0,102,255,0.12); }
+
+  .tiny-note{ font-size:12px; color:var(--muted); margin-top:8px; }
+
+  /* ===== Overflow protection (important, stops bubbles leaving card) ===== */
+  #commCard .thread, #commCard .thread * { box-sizing: border-box; overflow-wrap: break-word; word-break: break-word; }
+  #commCard .bubble, #commCard .bubble.me, #commCard .bubble.them { box-sizing: border-box; max-width: calc(100% - 18px); white-space: normal; overflow-x: hidden; }
+  #commCard .thread { overflow-x: hidden !important; padding-right: 6px; }
+  #commCard .bubble.me { margin-right:6px; }
+
+  /* responsive */
+  @media (max-width:760px){
+    .chats-inner { grid-template-columns: 1fr; }
+    .conv-list { max-height:160px; order:2; }
+    .thread { order:1; max-height:220px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">👷</div>
+        <div>
+          <h1 id="pageTitle">For Workers</h1>
+          <p id="pageSubtitle">Post Skills • My Jobs • Income • Secure Chats</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="homeBtn" class="btn ghost">← Home</button>
+        <button id="teluguBtn" class="lang-toggle">తెలుగు</button>
+        <button id="englishBtn" class="lang-toggle">English</button>
+      </div>
+    </header>
+
+    <div class="grid">
+
+      <!-- LEFT -->
+      <div class="left-col">
+
+        <!-- POST YOUR SKILLS -->
+        <section class="card fade" id="postCard">
+          <div class="card-head">
+            <div class="icon-circle">🛠️</div>
+            <div>
+              <h2 id="postTitle">Post Your Skills</h2>
+              <div id="postDesc" class="desc">Add skill, experience, rate (daily/hourly), and availability so customers can find you.</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Primary</span></div>
+          </div>
+
+          <div class="card-body">
+            <label>Skill</label>
+            <select id="skillSelect" class="input"></select>
+
+            <div class="row">
+              <div style="flex:1">
+                <label>Experience (yrs)</label>
+                <select id="expSelect" class="input"></select>
+              </div>
+              <div style="width:150px;">
+                <label>Rate (₹)</label>
+                <input id="rateInput" type="number" class="input" placeholder="e.g. 500" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div style="flex:1">
+                <label>Rate type</label>
+                <select id="rateType" class="input"><option value="daily">Per day</option><option value="hourly">Per hour</option></select>
+              </div>
+              <div style="width:200px;">
+                <label>Availability</label>
+                <select id="availSelect" class="input"><option>8am - 5pm</option><option>9am - 6pm</option><option>10am - 4pm</option></select>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button id="saveSkillBtn" class="btn">Save Skill</button>
+              <button id="saveDraftBtn" class="btn ghost">Save Draft</button>
+              <button id="addCustomSkillBtn" class="btn ghost">Add Custom Skill</button>
+              <div style="margin-left:auto" id="skillMsg" class="meta"></div>
+            </div>
+
+            <div id="savedSkills" class="list"></div>
+          </div>
+        </section>
+
+        <!-- MY JOB -->
+        <section class="card fade" id="myJobCard">
+          <div class="card-head">
+            <div class="icon-circle">📂</div>
+            <div>
+              <h2 id="myJobTitle">My Job</h2>
+              <div id="myJobDesc" class="desc">View customer requests, accepted jobs, pending jobs, completed jobs and ratings (read-only).</div>
+            </div>
+            <div style="margin-left:auto"><span id="jobBadge" class="badge">Jobs</span></div>
+          </div>
+
+          <div class="card-body">
+            <label>Filter by status</label>
+            <select id="jobFilter" class="input"><option value="all">All</option><option value="requested">Requested</option><option value="accepted">Accepted</option><option value="pending">Pending</option><option value="completed">Completed</option></select>
+
+            <div id="jobList" class="list"></div>
+          </div>
+        </section>
+
+        <!-- INCOME REPORTS -->
+        <section class="card fade" id="incomeCard">
+          <div class="card-head">
+            <div class="icon-circle">📊</div>
+            <div>
+              <h2>Income Reports</h2>
+              <div class="desc">Daily income, weekly summary, and monthly history for demo reporting.</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Export</span></div>
+          </div>
+
+          <div class="card-body">
+            <label>Period</label>
+            <select id="incomePeriod" class="input"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select>
+
+            <div id="incomeReport" class="list"></div>
+
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button id="exportIncome" class="btn">Export CSV</button>
+              <button id="clearIncome" class="btn ghost">Clear Demo</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- REVIEWS (read-only) -->
+        <section class="card fade" id="reviewsCard">
+          <div class="card-head">
+            <div class="icon-circle">⭐</div>
+            <div>
+              <h2>Reviews (read-only)</h2>
+              <div class="desc">Customer-provided feedback (worker cannot add their own ratings).</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">View</span></div>
+          </div>
+
+          <div class="card-body">
+            <div id="reviewsList" class="list"></div>
+            <div id="avgRating" style="margin-top:6px; font-weight:800; color:#0a3b6a;"></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT -->
+      <aside class="right-col">
+
+        <!-- GOV SCHEME ELIGIBILITY -->
+        <div class="small-card fade" id="schemeCard">
+          <div style="display:flex; gap:12px; align-items:center;">
+            <div class="icon-circle">🏛️</div>
+            <div>
+              <h3 style="margin:0">Gov. Scheme Eligibility</h3>
+              <div class="desc">Matches schemes like PM Kaushal, Mudra Loan, PMEGP, PM-Kisan tool subsidy, Women SHG support.</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>Experience (yrs)</label>
+            <select id="schemeExp" class="input"></select>
+            <div id="schemeResults" class="list" style="margin-top:10px;"></div>
+          </div>
+        </div>
+
+        <!-- PAYMENT STATUS & CHATS (OPEN CHAT THREAD REPLACED) -->
+        <div class="small-card fade" id="paymentsCard">
+          <div style="display:flex; gap:12px; align-items:center;">
+            <div class="icon-circle">💳</div>
+            <div>
+              <h3 style="margin:0">Payment Status & Chats</h3>
+              <div class="desc">Payments: paid / not paid. Chats are masked. Calls are secure callback requests.</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>Payment list</label>
+            <div id="paymentList" class="list"></div>
+
+            <hr style="border:none;border-top:1px solid rgba(4,48,106,0.06); margin:12px 0;" />
+
+            <!-- ===== Collapsible Calls & Chats (Option C) ===== -->
+            <div id="commWrapper">
+              <div id="commCard">
+
+                <!-- Calls (collapsible) -->
+                <details id="commCallsDetails" open>
+                  <summary>
+                    <div class="calls-summary">
+                      <div class="calls-avatar">S</div>
+                      <div class="calls-meta">
+                        <div class="calls-name">Secure Calls</div>
+                        <div class="calls-id">Masked callback & report tools (demo)</div>
+                      </div>
+                    </div>
+                  </summary>
+                  <div class="calls-body">
+                    <!-- Reuse IDs so existing JS still references same elements -->
+                    <div id="threadAvatarP" class="calls-avatar" aria-hidden="true">U</div>
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                      <div id="threadNameP" class="calls-name">Select conversation</div>
+                      <div id="threadMetaP" class="calls-id">ID: —</div>
+                    </div>
+
+                    <div class="calls-actions">
+                      <button id="threadCallBtnP" class="btn">Call</button>
+                      <button id="threadComplainBtnP" class="btn ghost">Report</button>
+                    </div>
+                  </div>
+                </details>
+
+                <!-- Chats (collapsible) -->
+                <details id="commChatsDetails" aria-expanded="false">
+                  <summary>
+                    <div class="chats-summary">
+                      <div class="chats-title">Secure Messages</div>
+                      <div style="margin-left:auto; font-size:12px; color:var(--muted)">Masked & queued (demo)</div>
+                    </div>
+                  </summary>
+
+                  <div class="chats-body">
+                    <div class="chats-inner">
+                      <!-- Conversation list -->
+                      <div class="conv-list" id="convListPayments" role="navigation" aria-label="Conversations">
+                        <!-- JS fills in conversation items -->
+                      </div>
+
+                      <!-- Thread area and composer -->
+                      <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div id="threadBodyP" class="thread" aria-live="polite">
+                          <div class="tiny-note" style="text-align:center;color:var(--muted);padding-top:18px">No conversation selected</div>
+                        </div>
+
+                        <div class="composer" id="composerP" style="display:none">
+                          <input id="msgInputP" type="text" placeholder="Write a secure message..." aria-label="Message input" />
+                          <button id="sendMsgP" class="send-btn">Send</button>
+                        </div>
+
+                        <div class="tiny-note">Messages stored locally for demo. Integrate with backend for production.</div>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+
+              </div>
+            </div>
+            <!-- ===== End collapsible ===== -->
+
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button id="requestCallbackBtn" class="accent2">Request Callback</button>
+              <div id="callbackStatus" class="meta" style="margin-left:6px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK STATS -->
+        <div class="small-card fade" id="statsCard">
+          <div style="display:flex; gap:12px; align-items:center;">
+            <div class="icon-circle">📈</div>
+            <div>
+              <h3 style="margin:0">Quick Stats</h3>
+              <div class="desc">Overview of skills posted, jobs, income and ratings (demo).</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <div><strong>Skills saved:</strong> <span id="statSkills">0</span></div>
+            <div><strong>Jobs assigned:</strong> <span id="statJobs">0</span></div>
+            <div><strong>Monthly (demo):</strong> ₹<span id="statIncome">0</span></div>
+            <div><strong>Avg rating:</strong> <span id="statRating">—</span></div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <div class="note" style="margin-top:14px;">
+      <strong>Demo note:</strong> All data saved locally in your browser (localStorage). Contacts are masked and calls are simulated. For production add secure server, authentication, and real telephony.
+    </div>
+  </div>
+
+<script>
+  // safe shared stub compatibility
+  window.RSC = window.RSC || {};
+  if (!window.RSC.applyLangToPage) window.RSC.applyLangToPage = function(){};
+</script>
+
+<script>
+(function(){
+  // --- sample data ---
+  const SAMPLE = {
+    demo_skills: ['masonry','tiling','plumbing','electrician','sewing','tailoring','carpentry','painting','tractor-driving','land-prep'],
+    demo_exp: [0.5,1,2,3,4,5,7,10,15],
+    sampleJobs: [
+      { id:'j1', title:'Boundary wall repair', status:'requested', amount:1500, customer:'+91-9555444333', date:'2025-12-01', paid:false, rating:null },
+      { id:'j2', title:'Floor tiling (small)', status:'accepted', amount:4000, customer:'+91-9666555444', date:'2025-11-28', paid:false, rating:null },
+      { id:'j3', title:'Stitch curtains', status:'completed', amount:800, customer:'+91-9777666555', date:'2025-11-20', paid:true, rating:5 }
+    ],
+    sampleIncome: [
+      { date:'2025-12-01', amount:400 }, { date:'2025-12-02', amount:500 }, { date:'2025-12-04', amount:600 },
+      { date:'2025-11-28', amount:300 }, { date:'2025-11-20', amount:700 }
+    ],
+    sampleReviews: [
+      { id:'r1', rating:5, text:'Excellent, timely and honest.' }, { id:'r2', rating:4, text:'Good quality.' }, { id:'r3', rating:3, text:'Work okay.' }
+    ],
+    sampleSchemes: [
+      { id:'sc1', name:'PM Kaushal Vikas', minExp:0, desc:'Skill training & placement' },
+      { id:'sc2', name:'Mudra Loan', minExp:1, desc:'Small loans for micro business' },
+      { id:'sc3', name:'PMEGP', minExp:2, desc:'Micro enterprise support' },
+      { id:'sc4', name:'PM-Kisan Tool Subsidy', minExp:0, desc:'Tool subsidy for farmers' },
+      { id:'sc5', name:'Women SHG Support', minExp:0, desc:'Support & funding for women SHGs' }
+    ],
+    sampleChats: [
+      { id:'c1', with:'+919999888877', last:'Are you available tomorrow?', messages:[{from:'customer',text:'Are you available tomorrow?'},{from:'me',text:'Yes, after 9am'}] },
+      { id:'c2', with:'+919888777666', last:'Can you start today?', messages:[{from:'customer',text:'Can you start today?'}] }
+    ]
+  };
+
+  // --- helpers ---
+  const $ = id => document.getElementById(id);
+  function store(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+  function read(k, fallback){ try{return JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback));}catch(e){return fallback;} }
+  function uid(p='id'){ return p + Date.now() + Math.floor(Math.random()*900); }
+  function maskPhone(p){ if(!p) return '—'; const d = p.replace(/\D/g,''); if(d.length<=6) return d; return d.slice(0,3) + '****' + d.slice(-2); }
+
+  // --- ensure local data ---
+  function ensureSamples(){
+    if(!localStorage.getItem('rsc_demo_skills')) store('rsc_demo_skills', SAMPLE.demo_skills);
+    if(!localStorage.getItem('rsc_demo_exp')) store('rsc_demo_exp', SAMPLE.demo_exp);
+    if(!localStorage.getItem('rsc_jobs')) store('rsc_jobs', SAMPLE.sampleJobs);
+    if(!localStorage.getItem('rsc_income')) store('rsc_income', SAMPLE.sampleIncome);
+    if(!localStorage.getItem('rsc_reviews')) store('rsc_reviews', SAMPLE.sampleReviews);
+    if(!localStorage.getItem('rsc_schemes')) store('rsc_schemes', SAMPLE.sampleSchemes);
+    if(!localStorage.getItem('rsc_chats')) store('rsc_chats', SAMPLE.sampleChats);
+    if(!localStorage.getItem('rsc_my_profile')) store('rsc_my_profile', { skills: [] });
+    if(!localStorage.getItem('rsc_callback_requests')) store('rsc_callback_requests', []);
+    if(!localStorage.getItem('rsc_conversations_v1')){
+      const convs = (SAMPLE.sampleChats || []).map((c,i)=>({
+        id: 'conv_' + (c.id || i),
+        name: (i===0 ? 'Sita (Customer)' : 'Ramaiah (Worker)'),
+        participantId: c.with,
+        messages: (c.messages || []).map(m => ({ from: m.from === 'me' ? 'me' : 'them', text: m.text, ts: Date.now() - ((i+1)*600000) }))
+      }));
+      store('rsc_conversations_v1', convs);
+    }
+  }
+
+  // --- render helpers ---
+  function populatePickers(){
+    const skills = read('rsc_demo_skills', []);
+    const exps = read('rsc_demo_exp', []);
+    $('skillSelect').innerHTML = skills.map(s=>`<option value="${s}">${s}</option>`).join('');
+    $('expSelect').innerHTML = exps.map(e=>`<option value="${e}">${e}</option>`).join('');
+    $('schemeExp').innerHTML = exps.map(e=>`<option value="${e}">${e} yrs</option>`).join('');
+  }
+
+  function renderSavedSkills(){
+    const profile = read('rsc_my_profile', {});
+    const list = profile.skills || [];
+    $('savedSkills').innerHTML = list.length ? list.map((s,idx)=>`<div class="list-item"><div style="flex:1"><div style="font-weight:800">${s.skill}</div><div class="meta">${s.experience} yrs • ₹${s.rate} (${s.type}) • ${s.available}</div></div><div class="actions"><button class="btn ghost" onclick="editSkill(${idx})">Edit</button><button class="btn ghost" onclick="removeSkill(${idx})">Remove</button></div></div>`).join('') : '<div class="meta">No skills saved. Use Save Skill above.</div>';
+    $('statSkills').textContent = list.length;
+  }
+
+  function renderJobList(){
+    const jobs = read('rsc_jobs', []);
+    const filter = $('jobFilter').value;
+    const filtered = filter === 'all' ? jobs : jobs.filter(j=> j.status === filter);
+    $('jobList').innerHTML = filtered.length ? filtered.map(j=>`<div class="list-item"><div style="flex:1"><div style="font-weight:800">${j.title}</div><div class="meta">${j.status} • ₹${j.amount} • ${j.date}</div></div><div class="actions"><button class="btn" onclick="acceptJob('${j.id}')">Accept</button><button class="btn ghost" onclick="completeJob('${j.id}')">Complete</button><button class="btn ghost" onclick="viewRating('${j.id}')">View Rating</button></div></div>`).join('') : '<div class="meta">No jobs in this filter.</div>';
+    $('statJobs').textContent = jobs.filter(j=> j.status === 'accepted' || j.status === 'completed').length;
+  }
+
+  function renderIncome(){
+    const incomes = read('rsc_income', []);
+    const period = $('incomePeriod').value;
+    if(period === 'daily') $('incomeReport').innerHTML = incomes.map(i=>`<div class="list-item"><div style="flex:1">${i.date}</div><div>₹${i.amount}</div></div>`).join('');
+    else if(period === 'weekly') $('incomeReport').innerHTML = '<div class="list-item"><div style="flex:1">Week 2025-11-24</div><div>₹1500</div></div><div class="list-item"><div style="flex:1">Week 2025-12-01</div><div>₹1700</div></div>';
+    else $('incomeReport').innerHTML = '<div class="list-item"><div style="flex:1">November 2025</div><div>₹2000</div></div><div class="list-item"><div style="flex:1">December 2025</div><div>₹3200</div></div>';
+    const total = incomes.reduce((s,x)=> s + (x.amount||0), 0); $('statIncome').textContent = total;
+  }
+
+  function renderReviews(){
+    const rev = read('rsc_reviews', []);
+    $('reviewsList').innerHTML = rev.length ? rev.map(r=>`<div class="list-item"><div style="flex:1"><div style="font-weight:800">${r.rating} ★</div><div class="meta">${r.text}</div></div></div>`).join('') : '<div class="meta">No reviews yet.</div>';
+    const avg = rev.length ? (rev.reduce((s,x)=>s + x.rating,0)/rev.length).toFixed(2) : '—';
+    $('avgRating').textContent = 'Average: ' + avg;
+    $('statRating').textContent = avg;
+  }
+
+  function renderSchemes(){
+    const schemes = read('rsc_schemes', []);
+    const exp = Number($('schemeExp').value || 0);
+    const matched = schemes.filter(s=> exp >= (s.minExp || 0));
+    $('schemeResults').innerHTML = matched.length ? matched.map(s=>`<div class="list-item"><div style="flex:1"><div style="font-weight:800">${s.name}</div><div class="meta">${s.desc}</div></div></div>`).join('') : '<div class="meta">No eligible schemes with selected experience.</div>';
+  }
+
+  function renderPayments(){
+    const jobs = read('rsc_jobs', []);
+    $('paymentList').innerHTML = jobs.map(j=>`<div class="list-item"><div style="flex:1"><div style="font-weight:800">${j.title}</div><div class="meta">Paid: ${j.paid ? 'Yes':'No'} • ₹${j.amount}</div></div><div class="actions"><button class="btn ghost" onclick="togglePaid('${j.id}')">${j.paid? 'Mark Unpaid':'Mark Paid'}</button></div></div>`).join('');
+  }
+
+  // --- existing actions (unchanged) ---
+  function saveSkill(){
+    const skill = $('skillSelect').value;
+    const exp = $('expSelect').value;
+    const rate = Number($('rateInput').value)||0;
+    const type = $('rateType').value;
+    const avail = $('availSelect').value;
+    if(!skill){ alert('Select skill'); return; }
+    const profile = read('rsc_my_profile', {});
+    profile.skills = profile.skills || [];
+    profile.skills.push({ skill, experience:exp, rate, type, available:avail });
+    store('rsc_my_profile', profile);
+    $('skillMsg').textContent = 'Saved.';
+    setTimeout(()=> $('skillMsg').textContent = '', 1400);
+    renderSavedSkills();
+  }
+
+  window.editSkill = function(idx){
+    const profile = read('rsc_my_profile', {});
+    const s = (profile.skills||[])[idx];
+    if(!s) return alert('Skill missing');
+    $('skillSelect').value = s.skill;
+    $('expSelect').value = s.experience;
+    $('rateInput').value = s.rate;
+    $('rateType').value = s.type || 'daily';
+    $('availSelect').value = s.available || '';
+    profile.skills.splice(idx,1);
+    store('rsc_my_profile', profile);
+    renderSavedSkills();
+  };
+
+  window.removeSkill = function(idx){
+    const profile = read('rsc_my_profile', {});
+    profile.skills = profile.skills || [];
+    profile.skills.splice(idx,1);
+    store('rsc_my_profile', profile);
+    renderSavedSkills();
+  };
+
+  window.addCustomSkill = function(){
+    const s = prompt('Enter custom skill');
+    if(!s) return;
+    const arr = read('rsc_demo_skills', []);
+    arr.unshift(s);
+    store('rsc_demo_skills', arr);
+    populatePickers();
+    alert('Custom skill added (demo).');
+  };
+
+  // job accept/complete
+  window.acceptJob = function(id){
+    const jobs = read('rsc_jobs', []);
+    const j = jobs.find(x=> x.id===id); if(!j) return;
+    j.status = 'accepted';
+    store('rsc_jobs', jobs);
+    renderJobList(); renderPayments();
+    alert('Job accepted (demo).');
+  };
+
+  window.completeJob = function(id){
+    const jobs = read('rsc_jobs', []);
+    const j = jobs.find(x=> x.id===id); if(!j) return;
+    j.status = 'completed'; j.completedAt = new Date().toISOString().slice(0,10); store('rsc_jobs', jobs);
+    renderJobList(); renderPayments(); alert('Job marked completed (demo).');
+  };
+
+  window.viewRating = function(id){
+    const jobs = read('rsc_jobs', []);
+    const j = jobs.find(x=> x.id===id); if(!j) return alert('No rating');
+    alert('Rating: ' + (j.rating || 'N/A'));
+  };
+
+  window.togglePaid = function(id){
+    const jobs = read('rsc_jobs', []);
+    const j = jobs.find(x=> x.id===id); if(!j) return;
+    j.paid = !j.paid; store('rsc_jobs', jobs); renderPayments(); alert('Payment status toggled (demo).');
+  };
+
+  // request callback
+  window.requestCallback = function(){
+    const callbacks = read('rsc_callback_requests', []);
+    const req = { id: uid('cb_'), createdAt: Date.now(), status:'requested', note:'Worker requested callback (demo).' };
+    callbacks.unshift(req); store('rsc_callback_requests', callbacks);
+    $('callbackStatus').textContent = 'Callback requested (demo).';
+  };
+
+  // export income
+  function exportIncomeCSV(){
+    const incomes = read('rsc_income', []);
+    const rows = ['date,amount'].concat(incomes.map(i=>`${i.date},${i.amount}`));
+    const csv = rows.join('\n');
+    const blob = new Blob([csv], { type:'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'income_demo.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  // callback: edit handlers
+  $('saveSkillBtn')?.addEventListener('click', saveSkill);
+  $('addCustomSkillBtn')?.addEventListener('click', addCustomSkill);
+  $('saveDraftBtn')?.addEventListener('click', ()=> { const drafts = read('rsc_skill_drafts', []); drafts.unshift({ id: uid('draft_'), skill: $('skillSelect').value, exp: $('expSelect').value, rate: $('rateInput').value, type: $('rateType').value, avail: $('availSelect').value, created: Date.now() }); store('rsc_skill_drafts', drafts); alert('Draft saved (demo).'); });
+
+  // --- Secure communication component (collapsible) ---
+  function generateMaskedToken(realNumber){
+    const token = 'VM-' + Math.random().toString(36).slice(2,9).toUpperCase();
+    const pm = JSON.parse(localStorage.getItem('rsc_maskmap_v1')||'{}');
+    pm[token] = { real: realNumber, createdAt: Date.now(), expiresAt: Date.now() + 24*3600*1000 };
+    localStorage.setItem('rsc_maskmap_v1', JSON.stringify(pm));
+    return token;
+  }
+
+  function loadConversations(){ return read('rsc_conversations_v1', []); }
+  function saveConversations(c){ store('rsc_conversations_v1', c); }
+
+  (function initCommComponent(){
+    const convListEl = $('convListPayments');
+    const threadBody = $('threadBodyP');
+    const threadName = $('threadNameP');
+    const threadMeta = $('threadMetaP');
+    const threadAvatar = $('threadAvatarP');
+    const composer = $('composerP');
+    const msgInput = $('msgInputP');
+    const sendBtn = $('sendMsgP');
+    const callBtn = $('threadCallBtnP');
+    const complainBtn = $('threadComplainBtnP');
+    const chatsDetails = $('commChatsDetails');
+    const callsDetails = $('commCallsDetails');
+
+    let conversations = loadConversations();
+    if(!Array.isArray(conversations)) conversations = [];
+    if(conversations.length === 0){
+      conversations = [
+        { id:'conv_demo_1', name:'Sita (Customer)', participantId:'+919555444333', messages:[ {from:'them', text:'Are you available tomorrow?', ts: Date.now() - 3600*1000}, {from:'me', text:'Yes, available from 9am', ts: Date.now() - 3500*1000 } ], lastTs: Date.now() - 3500*1000 },
+        { id:'conv_demo_2', name:'Ramaiah (Worker)', participantId:'+919666555444', messages:[ {from:'them', text:'What is your rate for tiling?', ts: Date.now() - 7200*1000} ], lastTs: Date.now() - 7200*1000 }
+      ];
+      saveConversations(conversations);
+    }
+
+    let currentConvId = null;
+
+    function escapeHtml(s){ return String(s||'').replace(/[&<"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','"':'&quot;',"'":'&#039;'})[m]; }); }
+
+    function formatTime(ts){ try{ const d = new Date(ts); return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+
+    function renderConvList(){
+      if(!convListEl) return;
+      convListEl.innerHTML = '';
+      conversations.sort((a,b)=> (b.lastTs||0) - (a.lastTs||0));
+      conversations.forEach(conv=>{
+        const it = document.createElement('div');
+        it.className = 'conv-item';
+        it.dataset.id = conv.id;
+        it.innerHTML = `<div class="conv-avatar">${(conv.name||'U').split(' ').map(x=>x[0]).slice(0,2).join('')}</div>
+          <div style="flex:1">
+            <div style="font-weight:800">${escapeHtml(conv.name)}</div>
+            <div class="tiny" style="color:var(--muted)">${escapeHtml((conv.messages && conv.messages.length) ? conv.messages[conv.messages.length-1].text : '')}</div>
+          </div>`;
+        it.addEventListener('click', ()=> openConversation(conv.id));
+        convListEl.appendChild(it);
+      });
+    }
+
+    function openConversation(id){
+      currentConvId = id;
+      if(convListEl) convListEl.querySelectorAll('.conv-item').forEach(n=> n.classList.toggle('active', n.dataset.id === id));
+      const conv = conversations.find(c=> c.id === id);
+      if(!conv) return;
+      // ensure chats section is open so user sees the thread
+      try{ if(chatsDetails) chatsDetails.open = true; }catch(e){}
+
+      // update calls header (so Calls top shows selected person)
+      if(threadName) threadName.textContent = conv.name;
+      if(threadMeta) threadMeta.textContent = conv.participantId ? ('ID: ' + maskPhone(conv.participantId)) : '';
+      if(threadAvatar) threadAvatar.textContent = (conv.name||'U').split(' ').map(x=>x[0]).slice(0,2).join('');
+
+      composer.style.display = 'flex';
+      threadBody.innerHTML = '';
+      if(!conv.messages || conv.messages.length === 0){
+        threadBody.innerHTML = '<div class="tiny-note" style="text-align:center;color:var(--muted);padding-top:18px">No messages yet</div>';
+      } else {
+        conv.messages.forEach(m=>{
+          const el = document.createElement('div');
+          el.className = 'bubble ' + (m.from === 'me' ? 'me' : 'them');
+          el.innerHTML = `<div>${escapeHtml(m.text)}</div><div class="ts">${formatTime(m.ts)}</div>`;
+          threadBody.appendChild(el);
+        });
+        setTimeout(()=> { threadBody.scrollTop = threadBody.scrollHeight; }, 40);
+      }
+    }
+
+    function sendMessage(text){
+      if(!currentConvId) return alert('Select conversation first');
+      const conv = conversations.find(c=> c.id === currentConvId);
+      if(!conv) return;
+      const m = { from: 'me', text: text, ts: Date.now() };
+      conv.messages.push(m);
+      conv.lastTs = m.ts;
+      saveConversations(conversations);
+      const el = document.createElement('div'); el.className = 'bubble me'; el.innerHTML = `<div>${escapeHtml(text)}</div><div class="ts">${formatTime(m.ts)}</div>`;
+      threadBody.appendChild(el); threadBody.scrollTop = threadBody.scrollHeight;
+      renderConvList();
+      if(navigator.onLine){
+        setTimeout(()=> {
+          const reply = { from:'them', text: 'Thanks, I will confirm.', ts: Date.now() };
+          conv.messages.push(reply); conv.lastTs = reply.ts; saveConversations(conversations);
+          const r = document.createElement('div'); r.className = 'bubble them'; r.innerHTML = `<div>${escapeHtml(reply.text)}</div><div class="ts">${formatTime(reply.ts)}</div>`;
+          threadBody.appendChild(r); threadBody.scrollTop = threadBody.scrollHeight; renderConvList();
+        }, 800 + Math.random()*800);
+      } else {
+        const q = read('rsc_comm_queue', []); q.push({ type:'message', convId: conv.id, payload: m, createdAt: Date.now() }); store('rsc_comm_queue', q);
+        alert('You are offline — message saved locally and will be sent when online (demo)');
+      }
+    }
+
+    // attach composer handlers
+    if(sendBtn) sendBtn.addEventListener('click', ()=> {
+      const v = msgInput.value.trim(); if(!v) return; sendMessage(v); msgInput.value = '';
+    });
+    if(msgInput) msgInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ e.preventDefault(); sendBtn.click(); } });
+
+    // call handler
+    if(callBtn) callBtn.addEventListener('click', ()=> {
+      if(!currentConvId){ alert('Select conversation first'); return; }
+      const conv = conversations.find(c=> c.id === currentConvId);
+      const real = conv.participantId || ('+919' + Math.floor(100000000 + Math.random()*900000000));
+      const token = generateMaskedToken(real);
+      const mm = document.getElementById('maskedModal');
+      if(mm){
+        const tokenEl = document.getElementById('maskedToken');
+        if(tokenEl) tokenEl.textContent = token;
+        mm.classList.add('show');
+        mm.dataset.masked = token;
+        if(!navigator.onLine){
+          const q = read('rsc_comm_queue', []); q.push({ type:'call_request', convId: conv.id, masked: token, createdAt: Date.now() }); store('rsc_comm_queue', q);
+          alert('Offline — call request saved (demo)');
+        }
+      } else {
+        alert('Masked call token (demo): ' + token + '\nIn production your server/Twilio returns the proxy number.');
+      }
+    });
+
+    // complaint/report
+    if(complainBtn) complainBtn.addEventListener('click', ()=> {
+      if(!currentConvId){ alert('Select conversation first'); return; }
+      const conv = conversations.find(c=> c.id === currentConvId);
+      const cm = document.getElementById('complaintModal');
+      if(cm){
+        cm.classList.add('show'); cm.dataset.against = conv.participantId || '';
+        const titleEl = document.getElementById('complaintTitleInput'); if(titleEl) titleEl.value = 'Complaint about ' + (conv.name || '');
+        const descEl = document.getElementById('complaintDescInput'); if(descEl) descEl.value = '';
+      } else {
+        const t = prompt('Complaint title'); if(!t) return; const d = prompt('Complaint details'); if(!d) return;
+        const comp = { id: uid('c_'), title: t, description: d, against: conv.participantId||null, createdAt: Date.now(), status:'open' };
+        const ex = read('rsc_demo_complaints', []); ex.push(comp); store('rsc_demo_complaints', ex);
+        alert('Complaint saved (demo)');
+      }
+    });
+
+    // helper to create conversation and open it
+    window.RSC_createConversation = function(name, participantId){
+      const id = 'conv_' + Math.random().toString(36).slice(2,9);
+      const conv = { id, name, participantId, messages: [], lastTs: Date.now() };
+      conversations.unshift(conv);
+      saveConversations(conversations);
+      renderConvList();
+      openConversation(conv.id);
+    };
+
+    renderConvList();
+    const first = conversations[0];
+    if(first) openConversation(first.id);
+
+    // flush queued comm actions when back online (demo)
+    window.addEventListener('online', ()=> {
+      const q = read('rsc_comm_queue', []);
+      if(q && q.length){
+        store('rsc_comm_queue', []);
+        alert('Back online — queued messages/calls would be synced to server in production (demo).');
+      }
+    });
+
+    // Expand chats when conversation opened (safety)
+    // (open the chats details so thread is visible)
+    window.openConversationForUI = openConversation;
+
+  })();
+
+  // --- language support ---
+  const L10N = {
+    en: { postTitle:'Post Your Skills', postDesc:'Add skill, experience, rate and availability so customers can find you.' },
+    te: { postTitle:'మీ నైపుణ్యాలు పెట్టండి', postDesc:'రిజిస్టర్డ్ కస్టమర్లు మీరు కనుగొనడానికి నైపుణ్యం, అనుభవం, ధరలు మరియు అందుబాటును జత చేయండి.' }
+  };
+  function applyLang(lang){
+    const d = L10N[lang] || L10N.en;
+    $('postTitle').textContent = d.postTitle;
+    $('postDesc').textContent = d.postDesc;
+    localStorage.setItem('rsc_ui_lang', lang);
+  }
+
+  // --- init ---
+  document.addEventListener('DOMContentLoaded', ()=>{
+    ensureSamples();
+    populatePickers();
+    renderSavedSkills();
+    renderJobList();
+    renderIncome();
+    renderReviews();
+    renderSchemes();
+    renderPayments();
+
+    $('jobFilter').addEventListener('change', renderJobList);
+    $('incomePeriod').addEventListener('change', renderIncome);
+    $('schemeExp').addEventListener('change', renderSchemes);
+    $('exportIncome').addEventListener('click', exportIncomeCSV);
+    $('requestCallbackBtn').addEventListener('click', requestCallback);
+
+    $('teluguBtn').addEventListener('click', ()=> applyLang('te'));
+    $('englishBtn').addEventListener('click', ()=> applyLang('en'));
+    $('homeBtn').addEventListener('click', ()=> location.href='home.html');
+
+    const lang = localStorage.getItem('rsc_ui_lang') || 'en';
+    applyLang(lang);
+  });
+
+  // expose for inline onclicks
+  window.acceptJob = acceptJob;
+  window.completeJob = completeJob;
+  window.viewRating = viewRating;
+  window.togglePaid = togglePaid;
+  window.editSkill = editSkill;
+  window.removeSkill = removeSkill;
+  window.requestCallback = requestCallback;
+
+})();
+</script>
+
+<!-- LANGUAGE WIRING SCRIPT -->
+<script>
+  (function(){
+    function log(...a){ console.log('[RSC-LANG]', ...a); }
+
+    // wire buttons if exist
+    const tel = document.getElementById('teluguBtn');
+    const eng = document.getElementById('englishBtn');
+
+    if(tel) tel.addEventListener('click', ()=> { 
+        if(window.RSC && RSC.setLang) RSC.setLang('te'); 
+        log('Set lang te'); 
+    });
+
+    if(eng) eng.addEventListener('click', ()=> { 
+        if(window.RSC && RSC.setLang) RSC.setLang('en'); 
+        log('Set lang en'); 
+    });
+
+    // apply translation after load
+    setTimeout(()=>{ 
+        if(window.RSC && RSC.applyLangToPage) RSC.applyLangToPage(); 
+        log('Lang applied'); 
+    }, 250);
+  })();
+</script>
+
+</body>
+</html>

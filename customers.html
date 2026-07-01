@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rural Skill Connect — For Customers</title>
+
+<style>
+  :root{
+    --bgA: #f5fbff;
+    --bgB: #fff7f2;
+    --card: #ffffff;
+    --accent: #0066ff;
+    --accent2: #ff6a00;
+    --muted: #586973;
+    --glass: rgba(255,255,255,0.8);
+  }
+  html,body{ height:100%; margin:0; font-family:Poppins, Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: linear-gradient(135deg,var(--bgA), #fffaf6 60%); color:#102b44; -webkit-font-smoothing:antialiased; }
+  .page { max-width:1200px; margin:18px auto; padding:20px; }
+  header.top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+  .brand { display:flex; gap:14px; align-items:center; }
+  .logo { width:72px; height:72px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:32px; background:linear-gradient(135deg,#fff,#f0f8ff); box-shadow:0 12px 36px rgba(3,50,100,0.06); }
+  .brand h1 { margin:0; font-size:22px; color:#04306a; }
+  .brand p { margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+  .controls { display:flex; gap:10px; align-items:center; }
+  .btn {
+    background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;
+    box-shadow:0 8px 22px rgba(0,102,255,0.12); transition:transform .12s ease;
+  }
+  .btn:hover{ transform:translateY(-3px); }
+  .btn.ghost { background:transparent; color:#04306a; border:1px solid rgba(4,48,106,0.08); box-shadow:none; }
+  .lang-toggle { padding:8px 10px; border-radius:8px; background:linear-gradient(90deg,#fff,#fff6f2); border:1px solid rgba(255,106,0,0.08); cursor:pointer; font-weight:700; color:var(--accent2); }
+
+  /* main grid */
+  .grid { display:grid; grid-template-columns: 1fr 420px; gap:18px; align-items:start; }
+
+  /* left column */
+  .left-col { display:flex; flex-direction:column; gap:16px; }
+  .card { background:var(--card); border-radius:14px; padding:16px; box-shadow:0 16px 40px rgba(6,30,76,0.06); overflow:hidden; }
+  .card-head { display:flex; align-items:center; gap:12px; }
+  .icon-circle { width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; background:linear-gradient(135deg,#fff,#fff7f2); box-shadow:0 8px 20px rgba(4,48,106,0.04); }
+  h2 { margin:0; font-size:18px; color:#053b76; }
+  .desc { color:var(--muted); margin-top:6px; font-size:13px; }
+
+  .card-body { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+  .input, select, textarea { width:100%; padding:10px; border-radius:10px; border:1px solid #eef6fb; font-size:14px; box-sizing:border-box; background:linear-gradient(180deg,#fff,#fbfeff); }
+  textarea { min-height:80px; }
+
+  .row { display:flex; gap:10px; align-items:center; }
+  .list { display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+  .list-item { display:flex; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; background:linear-gradient(180deg,#ffffff,#fffaf7); border:1px solid rgba(4,48,106,0.03); align-items:center; }
+  .meta { color:var(--muted); font-size:13px; }
+  .actions { display:flex; gap:8px; }
+
+  /* right column */
+  .right-col { display:flex; flex-direction:column; gap:16px; }
+  .small-card { background:linear-gradient(180deg,#fff,#fff7f2); padding:12px; border-radius:12px; box-shadow:0 12px 30px rgba(6,30,76,0.04); }
+  .badge { padding:6px 8px; border-radius:8px; font-weight:800; font-size:12px; color:#b94a00; background:linear-gradient(90deg,#fff3ea,#fff0e6); border:1px solid rgba(255,106,0,0.06); }
+
+  .note { margin-top:10px; color:var(--muted); font-size:13px; }
+
+  /* small responsive */
+  @media (max-width:980px){ .grid { grid-template-columns:1fr; } header.top { flex-direction:column; align-items:flex-start; gap:12px; } .logo { width:56px; height:56px; font-size:26px; } }
+
+  /* subtle fades */
+  .fade { animation:fadeUp .28s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none; } }
+
+  /* highlight orange action */
+  .accent2 { background:linear-gradient(90deg,var(--accent2), #ff8a3d); color:#fff; border:none; padding:10px 12px; border-radius:10px; font-weight:800; cursor:pointer; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">🧑‍🌾</div>
+        <div>
+          <h1 id="pageTitle">For Customers</h1>
+          <p id="pageSubtitle">Post a Job • Find Workers • Secure Chats • Payments</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="homeBtn" class="btn ghost">← Home</button>
+        <button id="teluguBtn" class="lang-toggle">తెలుగు</button>
+        <button id="englishBtn" class="lang-toggle">English</button>
+      </div>
+    </header>
+
+    <div class="grid">
+
+      <!-- LEFT: main features -->
+      <div class="left-col">
+
+        <!-- POST A JOB -->
+        <section class="card fade" id="postJobCard" aria-labelledby="postJobTitle">
+          <div class="card-head">
+            <div class="icon-circle">📝</div>
+            <div>
+              <h2 id="postJobTitle">Post a Job</h2>
+              <div id="postJobDesc" class="desc">Create a job with type, budget, location and timing — quick and simple for village users.</div>
+            </div>
+            <div style="margin-left:auto"><span id="postBadge" class="badge">Demo</span></div>
+          </div>
+
+          <div class="card-body">
+            <label>Job title</label>
+            <input id="jobTitle" class="input" placeholder="e.g. Fix water pump" />
+
+            <div class="row">
+              <div style="flex:1">
+                <label>Work type / Skill</label>
+                <select id="jobSkill" class="input"></select>
+              </div>
+              <div style="width:130px;">
+                <label>Budget (₹)</label>
+                <input id="jobBudget" type="number" class="input" placeholder="e.g. 1200" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div style="flex:1">
+                <label>Date & Time</label>
+                <input id="jobDate" type="date" class="input" />
+              </div>
+              <div style="width:200px;">
+                <label>Location (village)</label>
+                <input id="jobLocation" class="input" placeholder="e.g. Surampalem" />
+              </div>
+            </div>
+
+            <label>Description</label>
+            <textarea id="jobDesc" class="input" placeholder="Short description (materials, duration)..."></textarea>
+
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button id="postJobBtn" class="btn">Post Job</button>
+              <button id="saveJobDraft" class="btn ghost">Save Draft</button>
+              <div style="margin-left:auto" id="postJobMsg" class="meta"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- WORKER SEARCH -->
+        <section class="card fade" id="searchCard">
+          <div class="card-head">
+            <div class="icon-circle">🔎</div>
+            <div>
+              <h2 id="searchTitle">Search Workers</h2>
+              <div id="searchDesc" class="desc">Filter by skill, max price, min rating and distance (demo distance sorting).</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Find</span></div>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div style="flex:1">
+                <label>Skill</label>
+                <select id="filterSkill" class="input"></select>
+              </div>
+              <div style="width:140px;">
+                <label>Max Rate (₹)</label>
+                <input id="filterPrice" type="number" class="input" placeholder="e.g. 1000" />
+              </div>
+              <div style="width:120px;">
+                <label>Min Rating</label>
+                <select id="filterRating" class="input"><option value="0">Any</option><option value="3">3+</option><option value="4">4+</option><option value="4.5">4.5+</option></select>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:6px;">
+              <div style="flex:1">
+                <label>Distance (nearest first)</label>
+                <select id="filterDistance" class="input"><option value="any">Any</option><option value="5">Within 5 km</option><option value="15">Within 15 km</option></select>
+              </div>
+              <div>
+                <label>&nbsp;</label>
+                <button id="runSearchBtn" class="btn">Search</button>
+              </div>
+            </div>
+
+            <div id="searchResults" class="list" style="margin-top:10px;"></div>
+          </div>
+        </section>
+
+        <!-- MY REQUESTS -->
+        <section class="card fade" id="requestsCard">
+          <div class="card-head">
+            <div class="icon-circle">📂</div>
+            <div>
+              <h2 id="requestsTitle">My Requests</h2>
+              <div id="requestsDesc" class="desc">Sent requests, ongoing jobs and completed jobs are listed here.</div>
+            </div>
+            <div style="margin-left:auto"><span id="reqBadge" class="badge">3</span></div>
+          </div>
+
+          <div class="card-body">
+            <div style="display:flex; gap:8px;">
+              <button id="tabSent" class="btn ghost">Sent</button>
+              <button id="tabOngoing" class="btn ghost">Ongoing</button>
+              <button id="tabCompleted" class="btn ghost">Completed</button>
+            </div>
+
+            <div id="requestsList" class="list" style="margin-top:10px;"></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT: payments, chats, quick stats -->
+      <aside class="right-col">
+
+        <!-- Payments -->
+        <div class="small-card fade" id="paymentsCard">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="icon-circle">💳</div>
+            <div>
+              <h3 style="margin:0">Payments</h3>
+              <div class="desc">Track which jobs were paid or pending.</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Demo</span></div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <div id="paymentsList" class="list"></div>
+          </div>
+        </div>
+
+        <!-- Chats & Calls -->
+        <div class="small-card fade" id="chatCard">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="icon-circle">💬</div>
+            <div>
+              <h3 style="margin:0">Chats & Calls</h3>
+              <div class="desc">Anonymized messages and secure callback (no raw phone numbers shown).</div>
+            </div>
+            <div style="margin-left:auto"><span class="badge">Secure</span></div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>Open thread</label>
+            <select id="chatSelect" class="input"></select>
+            <div id="chatWindow" style="margin-top:8px;"></div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button id="requestCallbackBtn" class="accent2">Request Callback</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="small-card fade" id="statsCard">
+          <div style="display:flex; gap:12px; align-items:center;">
+            <div class="icon-circle">📊</div>
+            <div>
+              <h3 style="margin:0">Quick Stats</h3>
+              <div class="desc">Overview of requests, avg worker rating and total spent (demo).</div>
+            </div>
+          </div>
+
+          <div style="margin-top:10px; display:flex; gap:8px; flex-direction:column;">
+            <div><strong id="statRequests">Requests:</strong> <span id="statRequestsVal">0</span></div>
+            <div><strong id="statSpent">Total spent:</strong> ₹<span id="statSpentVal">0</span></div>
+            <div><strong id="statRating">Avg worker rating:</strong> <span id="statRatingVal">—</span></div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <div class="note" style="margin-top:14px;">
+      <strong>Demo note:</strong> All data is stored locally (browser `localStorage`). Contacts are masked for privacy and the call feature is simulated for demos. For production add authentication, secure calling, and server sync.
+    </div>
+  </div>
+
+<!-- Shared safe stub (if missing) will be harmless -->
+<script>
+  window.RSC = window.RSC || {};
+  if (!window.RSC.applyLangToPage) window.RSC.applyLangToPage = function(){};
+</script>
+
+<script>
+(function(){
+  // ---------- Sample data ----------
+  const SAMPLE = {
+    workers: [
+      { id:'w1', name:'Raju', skills:['masonry','painting'], exp:5, rate:800, rating:4.8, dist:4, phone:'+91-98*****111' },
+      { id:'w2', name:'Sita', skills:['sewing','tailoring'], exp:3, rate:300, rating:4.4, dist:2, phone:'+91-98*****222' },
+      { id:'w3', name:'Balu', skills:['plumbing','electrician'], exp:7, rate:1200, rating:4.9, dist:12, phone:'+91-97*****333' },
+      { id:'w4', name:'Radha', skills:['carpentry'], exp:2, rate:500, rating:4.2, dist:6, phone:'+91-96*****444' },
+      { id:'w5', name:'Murali', skills:['tractor-driving','land-prep'], exp:10, rate:1500, rating:4.7, dist:20, phone:'+91-95*****555' }
+    ],
+    demo_skills: ['masonry','tiling','plumbing','electrician','sewing','tailoring','carpentry','painting','tractor-driving','land-prep'],
+    demo_exp: [0.5,1,2,3,4,5,7,10,15],
+    sampleChats: [
+      { id:'c1', with:'+919999888877', last:'Are you available tomorrow?', messages:[{from:'customer',text:'Are you available tomorrow?'},{from:'worker',text:'Yes, after 9am'}] },
+      { id:'c2', with:'+919888777666', last:'Can you start today?', messages:[{from:'customer',text:'Can you start today?'}] }
+    ],
+    sampleRequests: [
+      { id:'r1', title:'Fix water pump', skill:'plumbing', budget:1200, location:'Surampalem', date:'2025-12-01', status:'sent', workerId:null, paid:false },
+      { id:'r2', title:'Paint room', skill:'painting', budget:1800, location:'Surampalem', date:'2025-11-28', status:'ongoing', workerId:'w1', paid:false },
+      { id:'r3', title:'Stitch curtains', skill:'sewing', budget:800, location:'Surampalem', date:'2025-11-20', status:'completed', workerId:'w2', paid:true }
+    ]
+  };
+
+  // ---------- helpers ----------
+  const $ = id => document.getElementById(id);
+  function store(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
+  function read(key, fallback){ try{ return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch(e){ return fallback; } }
+  function uid(p='id'){ return p + Date.now() + Math.floor(Math.random()*900); }
+  function maskPhone(p){ if(!p) return '—'; const d = p.replace(/\D/g,''); if(d.length<=6) return d; return d.slice(0,3) + '****' + d.slice(-2); }
+
+  // ---------- ensure demo storage ----------
+  function ensureDemo(){
+    if(!localStorage.getItem('rsc_workers_sample')) store('rsc_workers_sample', SAMPLE.workers);
+    if(!localStorage.getItem('rsc_demo_skills')) store('rsc_demo_skills', SAMPLE.demo_skills);
+    if(!localStorage.getItem('rsc_demo_exp')) store('rsc_demo_exp', SAMPLE.demo_exp);
+    if(!localStorage.getItem('rsc_chats')) store('rsc_chats', SAMPLE.sampleChats);
+    if(!localStorage.getItem('rsc_my_requests')) store('rsc_my_requests', SAMPLE.sampleRequests);
+  }
+
+  // ---------- renderers ----------
+  function populatePickers(){
+    const skills = read('rsc_demo_skills', []);
+    $('jobSkill').innerHTML = `<option value="">Select skill</option>` + skills.map(s=>`<option value="${s}">${s}</option>`).join('');
+    $('filterSkill').innerHTML = `<option value="">Any</option>` + skills.map(s=>`<option value="${s}">${s}</option>`).join('');
+  }
+
+  function renderSearchResults(list){
+    if(!list.length){ $('searchResults').innerHTML = '<div class="muted">No workers found.</div>'; return; }
+    $('searchResults').innerHTML = list.map(w=>`
+      <div class="list-item">
+        <div style="flex:1">
+          <div style="font-weight:800">${w.name} <span class="meta">• ${w.exp} yrs</span></div>
+          <div class="meta">${w.skills.join(', ')} • ₹${w.rate} • ${w.rating}★ • ${w.dist} km</div>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="requestWorker('${w.id}')">Request</button>
+          <button class="btn ghost" onclick="viewWorker('${w.id}')">View</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function performSearch(){
+    const skill = $('filterSkill').value;
+    const maxRate = Number($('filterPrice').value) || Infinity;
+    const minRating = Number($('filterRating').value) || 0;
+    const distLimit = $('filterDistance').value === 'any' ? Infinity : Number($('filterDistance').value);
+    let list = read('rsc_workers_sample', []);
+    list = list.filter(w => w.rate <= maxRate && w.rating >= minRating && w.dist <= distLimit);
+    if(skill) list = list.filter(w => w.skills.includes(skill));
+    // sort by distance then rating
+    list.sort((a,b)=> a.dist - b.dist || b.rating - a.rating);
+    renderSearchResults(list);
+  }
+
+  function renderRequests(tab='sent'){
+    const all = read('rsc_my_requests', []);
+    let filtered = [];
+    if(tab==='sent') filtered = all.filter(r=> r.status === 'sent' || r.status === 'pending' || r.status==='cancelled');
+    if(tab==='ongoing') filtered = all.filter(r=> r.status === 'ongoing' || r.status === 'accepted');
+    if(tab==='completed') filtered = all.filter(r=> r.status === 'completed');
+    if(!filtered.length) { $('requestsList').innerHTML = '<div class="muted">No requests in this section.</div>'; return; }
+    $('requestsList').innerHTML = filtered.map(r => `
+      <div class="list-item">
+        <div style="flex:1">
+          <div style="font-weight:800">${r.title}</div>
+          <div class="meta">${r.skill} • ₹${r.budget} • ${r.location} • ${r.date}</div>
+          <div style="margin-top:6px;color:${r.status==='completed' ? 'var(--accent)' : 'var(--muted)'}">Status: ${r.status}${r.workerId ? ' • With: ' + maskPhone(findWorkerPhone(r.workerId)) : ''}</div>
+        </div>
+        <div class="actions">
+          ${r.status !== 'completed' ? `<button class="btn" onclick="cancelRequest('${r.id}')">Cancel</button>` : ''}
+          ${r.status === 'completed' && !r.paid ? `<button class="accent2" onclick="markPaid('${r.id}')">Mark Paid</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderPayments(){
+    const all = read('rsc_my_requests', []);
+    if(!all.length){ $('paymentsList').innerHTML = '<div class="muted">No payment records.</div>'; return; }
+    $('paymentsList').innerHTML = all.map(r=>`
+      <div class="list-item">
+        <div style="flex:1"><div style="font-weight:800">${r.title}</div><div class="meta">${r.status} • ₹${r.budget} • Paid: ${r.paid ? 'Yes':'No'}</div></div>
+        <div class="actions">${r.paid ? '<button class="btn ghost" onclick="togglePaid(\''+r.id+'\')">Mark Unpaid</button>' : '<button class="btn" onclick="togglePaid(\''+r.id+'\')">Mark Paid</button>'}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderChats(){
+    const chats = read('rsc_chats', []);
+    if(!chats.length) { $('chatSelect').innerHTML = '<option>No threads</option>'; $('chatWindow').innerHTML = '<div class="muted">No threads.</div>'; return; }
+    $('chatSelect').innerHTML = chats.map((c,i)=>`<option value="${i}">${maskPhone(c.with)} — ${c.last || ''}</option>`).join('');
+    openChat(0);
+  }
+
+  // ---------- small helpers ----------
+  function findWorkerPhone(id){
+    const w = read('rsc_workers_sample', []).find(x=>x.id===id);
+    return w ? w.phone : '';
+  }
+
+  function updateStats(){
+    const all = read('rsc_my_requests', []);
+    $('statRequestsVal').textContent = all.length;
+    const spent = all.filter(r=> r.paid).reduce((s,x)=>s + Number(x.budget||0), 0);
+    $('statSpentVal').textContent = spent;
+    const workers = read('rsc_workers_sample', []);
+    const avg = (workers.reduce((s,x)=>s + (x.rating||0),0)/workers.length).toFixed(2);
+    $('statRatingVal').textContent = isNaN(avg) ? '—' : avg;
+  }
+
+  // ---------- actions ----------
+  window.postJob = function(){
+    const title = $('jobTitle').value.trim();
+    const skill = $('jobSkill').value;
+    const budget = Number($('jobBudget').value) || 0;
+    const date = $('jobDate').value || new Date().toISOString().slice(0,10);
+    const location = $('jobLocation').value.trim() || 'Unknown';
+    const desc = $('jobDesc').value.trim();
+    if(!title || !skill){ alert('Enter title and skill'); return; }
+    const requests = read('rsc_my_requests', []);
+    const r = { id: uid('req_'), title, skill, budget, date, location, desc, status:'sent', workerId:null, paid:false };
+    requests.unshift(r); store('rsc_my_requests', requests);
+    $('postJobMsg').textContent = 'Posted (demo).';
+    setTimeout(()=> $('postJobMsg').textContent = '', 1800);
+    renderRequests('sent'); renderPayments(); updateStats();
+    // clear inputs
+    $('jobTitle').value=''; $('jobBudget').value=''; $('jobDesc').value=''; $('jobLocation').value='';
+  };
+
+  window.saveJobDraft = function(){
+    const drafts = read('rsc_job_drafts', []);
+    const d = { id: uid('draft_'), title:$('jobTitle').value, skill:$('jobSkill').value, budget:$('jobBudget').value, date:$('jobDate').value, location:$('jobLocation').value, desc:$('jobDesc').value, created: Date.now() };
+    drafts.unshift(d); store('rsc_job_drafts', drafts); alert('Draft saved locally (demo).');
+  };
+
+  window.requestWorker = function(workerId){
+    // attach worker to first pending sent request (demo behavior)
+    const requests = read('rsc_my_requests', []);
+    const target = requests.find(r => r.status === 'sent' && !r.workerId) || requests[0];
+    if(!target) return alert('No request available to attach (create a job first).');
+    target.workerId = workerId;
+    target.status = 'ongoing';
+    store('rsc_my_requests', requests);
+    renderRequests('ongoing'); renderPayments(); updateStats();
+    alert('Worker requested & attached to job (demo). Contact masked.');
+  };
+
+  window.viewWorker = function(id){
+    const w = read('rsc_workers_sample', []).find(x=>x.id===id);
+    if(!w) return alert('Worker not found');
+    alert(`${w.name}\nSkills: ${w.skills.join(', ')}\nExperience: ${w.exp} yrs\nRate: ₹${w.rate}\nRating: ${w.rating}★\nContact (masked): ${maskPhone(w.phone)}`);
+  };
+
+  window.cancelRequest = function(id){
+    const list = read('rsc_my_requests', []);
+    const r = list.find(x=>x.id===id); if(!r) return;
+    r.status = 'cancelled';
+    store('rsc_my_requests', list);
+    renderRequests('sent'); updateStats(); renderPayments();
+  };
+
+  window.markPaid = function(id){
+    const list = read('rsc_my_requests', []);
+    const r = list.find(x=>x.id===id); if(!r) return;
+    r.paid = true;
+    store('rsc_my_requests', list);
+    renderPayments(); updateStats(); alert('Marked as paid (demo).');
+  };
+
+  window.togglePaid = function(id){
+    const list = read('rsc_my_requests', []);
+    const r = list.find(x=>x.id===id); if(!r) return;
+    r.paid = !r.paid;
+    store('rsc_my_requests', list);
+    renderPayments(); updateStats();
+  };
+
+  // chats
+  function openChat(index){
+    const chats = read('rsc_chats', []);
+    const c = chats[index];
+    if(!c) { $('chatWindow').innerHTML = '<div class="muted">No threads.</div>'; return; }
+    $('chatWindow').innerHTML = `<div style="padding:8px; border-radius:8px; background:#fff; border:1px solid rgba(0,0,0,0.02); max-height:160px; overflow:auto;">` +
+      c.messages.map(m=>`<div style="margin-bottom:8px;"><strong>${m.from === 'customer' ? 'You' : 'Worker'}</strong>: ${m.text}</div>`).join('') +
+      `</div>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <input id="chatInput" type="text" class="input" placeholder="Write message..." style="flex:1" />
+        <button id="sendChatBtn" class="btn">Send</button>
+      </div>`;
+    $('sendChatBtn').addEventListener('click', ()=> {
+      const txt = $('chatInput').value.trim(); if(!txt) return;
+      c.messages.push({ from:'customer', text:txt }); c.last = txt; store('rsc_chats', read('rsc_chats', []));
+      openChat(index); renderChats();
+    });
+  }
+
+  window.requestCallback = function(){
+    const cb = read('rsc_callback_requests', []);
+    cb.unshift({ id: uid('cb_'), createdAt: Date.now(), status:'requested', note:'Customer requested callback (demo).' });
+    store('rsc_callback_requests', cb);
+    alert('Callback requested (demo). Worker will be notified. Contact masked.');
+  };
+
+  // export or clear functions (demo)
+  window.exportJobsCSV = function(){
+    const jobs = read('rsc_my_requests', []);
+    const rows = ['title,skill,budget,date,location,status,paid'];
+    jobs.forEach(j => rows.push(`${JSON.stringify(j.title)},${j.skill},${j.budget},${j.date},${j.location},${j.status},${j.paid}`));
+    const blob = new Blob([rows.join('\n')], { type:'text/csv' }); const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'my_requests.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  };
+
+  // ---------- Language strings ----------
+  const L10N = {
+    en: {
+      postJobTitle: 'Post a Job',
+      postJobDesc: 'Create a job with type, budget, location and timing. Simple for village users.',
+      searchTitle: 'Search Workers',
+      searchDesc: 'Filter by skill, max price, rating and distance.',
+      requestsTitle: 'My Requests',
+      requestsDesc: 'Sent requests, ongoing jobs and completed jobs.'
+    },
+    te: {
+      postJobTitle: 'ఉద్యోగాన్ని పోస్ట్ చేయండి',
+      postJobDesc: 'పని రకం, బడ్జెట్, స్థలం మరియు సమయం తో ఒక పని సృష్టించండి. గ్రాములతో ఉపయోగానికి సులువు.',
+      searchTitle: 'పనివారులను వెతకండి',
+      searchDesc: 'కౌశలం, గరిష్ట ధర, రేటింగ్ మరియు దూరం ద్వారా ఫిల్టర్ చేయండి.',
+      requestsTitle: 'నా రిక్వెస్ట్‌లు',
+      requestsDesc: 'పంపిన అభ్యర్థనలు, కొనసాగుతున్న పనులు మరియు పూర్తి అయిన పనులు.'
+    }
+  };
+
+  function applyLang(lang){
+    const d = L10N[lang] || L10N.en;
+    $('postJobTitle').textContent = d.postJobTitle;
+    $('postJobDesc').textContent = d.postJobDesc;
+    $('searchTitle').textContent = d.searchTitle;
+    $('searchDesc').textContent = d.searchDesc;
+    $('requestsTitle').textContent = d.requestsTitle;
+    $('requestsDesc').textContent = d.requestsDesc;
+    localStorage.setItem('rsc_ui_lang', lang);
+  }
+
+  // ---------- Init ----------
+  document.addEventListener('DOMContentLoaded', ()=> {
+    ensureDemo();
+    populatePickers();
+    // default search list
+    performSearch();
+    renderRequests('sent');
+    renderPayments();
+    renderChats();
+    updateStats();
+
+    // attach events
+    $('postJobBtn').addEventListener('click', postJob);
+    $('saveJobDraft').addEventListener('click', saveJobDraft);
+    $('runSearchBtn').addEventListener('click', performSearch);
+    $('tabSent').addEventListener('click', ()=> renderRequests('sent'));
+    $('tabOngoing').addEventListener('click', ()=> renderRequests('ongoing'));
+    $('tabCompleted').addEventListener('click', ()=> renderRequests('completed'));
+    $('requestCallbackBtn').addEventListener('click', requestCallback);
+    $('exportBtn')?.addEventListener('click', exportJobsCSV);
+
+    $('teluguBtn').addEventListener('click', ()=> applyLang('te'));
+    $('englishBtn').addEventListener('click', ()=> applyLang('en'));
+    $('homeBtn').addEventListener('click', ()=> location.href='home.html');
+
+    // chat thread change
+    $('chatSelect').addEventListener('change', ()=> openChat(Number($('chatSelect').value)));
+
+    // set language
+    const lang = localStorage.getItem('rsc_ui_lang') || 'en';
+    applyLang(lang);
+  });
+
+  // expose a few functions for inline onclick
+  window.requestWorker = requestWorker;
+  window.viewWorker = viewWorker;
+  window.cancelRequest = cancelRequest;
+  window.markPaid = markPaid;
+  window.togglePaid = togglePaid;
+  window.openChat = openChat;
+  window.requestCallback = requestCallback;
+  window.exportJobsCSV = exportJobsCSV;
+
+})();
+</script>
+<!-- LANGUAGE WIRING SCRIPT -->
+<script>
+  (function(){
+    function log(...a){ console.log('[RSC-LANG]', ...a); }
+
+    // wire buttons if exist
+    const tel = document.getElementById('teluguBtn');
+    const eng = document.getElementById('englishBtn');
+
+    if(tel) tel.addEventListener('click', ()=> { 
+        if(window.RSC && RSC.setLang) RSC.setLang('te'); 
+        log('Set lang te'); 
+    });
+
+    if(eng) eng.addEventListener('click', ()=> { 
+        if(window.RSC && RSC.setLang) RSC.setLang('en'); 
+        log('Set lang en'); 
+    });
+
+    // apply translation after load
+    setTimeout(()=>{ 
+        if(window.RSC && RSC.applyLangToPage) RSC.applyLangToPage(); 
+        log('Lang applied'); 
+    }, 250);
+  })();
+</script>
+
+
+
+</body>
+</html>

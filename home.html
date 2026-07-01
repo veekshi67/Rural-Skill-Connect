@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rural Skill Connect — Home</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Page overrides */
+    :root{
+      --accent:#0066ff; --accent2:#ff6a00; --success:#16a34a; --danger:#ef4444; --muted:#64748b;
+    }
+    html,body{height:100%; margin:0; font-family:Inter,system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; -webkit-font-smoothing:antialiased;}
+    body{
+      background:
+        radial-gradient(1200px 400px at 10% 10%, rgba(2,102,255,0.06), transparent 8%),
+        radial-gradient(900px 300px at 90% 80%, rgba(255,106,0,0.04), transparent 8%),
+        linear-gradient(135deg,#f5fbff,#fffaf6);
+      color:#04243a;
+    }
+
+    /* decorative SVG overlay */
+    .bg-decor {
+      position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.28;
+      mix-blend-mode:soft-light;
+      transform:translateZ(0);
+    }
+
+    .home-wrap { max-width:1100px; margin:28px auto; padding:18px; position:relative; z-index:2; }
+
+    .home-header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .home-logo { width:72px; height:72px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#fff,#eaf7ff); box-shadow:0 12px 30px rgba(2,36,85,0.06); overflow:hidden; }
+    .home-logo img{ width:100%; height:100%; object-fit:contain; display:block; }
+
+    .home-title { font-size:22px; margin:0; color:#063b9a; letter-spacing:-0.2px; }
+    .home-sub { margin:4px 0 0; color:#4b6472; font-size:13px; }
+
+    .network-banner { display:flex; gap:8px; align-items:center; justify-content:center; padding:8px 12px; border-radius:10px; background:#fff; box-shadow:0 8px 18px rgba(6,30,76,0.04); margin:12px 0; font-weight:700; color:#063b9a; opacity:0; transform:translateY(-6px); transition:all .36s cubic-bezier(.2,.9,.3,1); }
+
+    .home-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; margin-top:18px; align-items:stretch; }
+    .home-card { background:#fff; border-radius:14px; padding:20px; box-shadow:0 14px 40px rgba(6,30,76,0.06); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; min-height:180px; cursor:pointer; transition:transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s; transform-origin:center; }
+    .home-card:hover { transform:translateY(-8px) scale(1.01); box-shadow:0 26px 60px rgba(6,30,76,0.14); }
+    .card-emoji { font-size:38px; }
+    .card-label { font-size:18px; font-weight:700; color:#04306a; }
+    .card-desc { color:#586973; font-size:13px; margin-top:6px; max-width:320px; }
+
+    .home-controls { display:flex; gap:10px; align-items:center; }
+    .btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; color:#fff; background:var(--accent); box-shadow:0 8px 22px rgba(0,102,255,0.12); transition:transform .12s, box-shadow .12s, opacity .12s; }
+    .btn:active{ transform:translateY(1px) scale(.995); }
+    .btn.ghost { background:transparent; color:#063b9a; border:1px solid rgba(6,59,154,0.08); box-shadow:none; }
+    .lang-toggle { padding:8px 10px; border-radius:8px; background:linear-gradient(90deg,#fff,#fff6f2); border:1px solid rgba(2,36,85,0.05); color:var(--accent2); font-weight:800; cursor:pointer; }
+
+    /* HERO (no quick search) */
+    .hero { background:linear-gradient(180deg,#ffffff, #f3f8ff); border-radius:14px; padding:18px; box-shadow:0 16px 40px rgba(6,30,76,0.04); display:flex; gap:12px; align-items:center; justify-content:space-between; }
+    .hero-left { flex:1; }
+    .hero-title { font-weight:900; color:#05204a; font-size:18px; }
+    .hero-note { font-size:13px; color:var(--muted); margin-top:6px; }
+
+    .hero-img { width:320px; border-radius:10px; box-shadow:0 12px 40px rgba(2,36,85,0.06); transform:translateY(0); transition:transform .9s cubic-bezier(.2,.9,.3,1); }
+
+    /* subtle card entrance */
+    .fade-in { opacity:0; transform:translateY(8px); transition:all .44s cubic-bezier(.2,.9,.3,1); }
+    .fade-in.show { opacity:1; transform:translateY(0); }
+
+    /* modal / toast */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(2,6,23,0.45); display:flex; align-items:center; justify-content:center; z-index:60; opacity:0; pointer-events:none; transition:opacity .24s; }
+    .modal-backdrop.show { opacity:1; pointer-events:auto; }
+    .modal { background:#fff; border-radius:12px; padding:18px; width:560px; max-width:92%; box-shadow:0 20px 60px rgba(2,36,85,0.18); transform:translateY(18px) scale(.995); transition:transform .22s ease, box-shadow .22s; }
+    .modal-backdrop.show .modal { transform:translateY(0) scale(1); }
+
+    .modal h3 { margin:0 0 8px 0; color:#05204a; }
+    .modal .row { margin-top:8px; display:flex; gap:8px; align-items:center; }
+    .modal .input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(2,36,85,0.06); }
+
+    .toast-wrap { position:fixed; right:18px; bottom:18px; z-index:80; display:flex; flex-direction:column; gap:8px; }
+    .toast { padding:10px 14px; border-radius:10px; box-shadow:0 8px 20px rgba(2,36,85,0.06); background:linear-gradient(90deg,#eef2ff,#f0f9ff); border:1px solid rgba(2,36,85,0.06); transform:translateX(18px); opacity:0; transition:transform .36s cubic-bezier(.2,.9,.3,1), opacity .36s; }
+    .toast.show { transform:translateX(0); opacity:1; }
+
+    @media (max-width:1000px){ .hero{flex-direction:column; align-items:flex-start;} .hero-img{width:100%;} }
+    @media (max-width:640px){ .home-grid{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <!-- decorative SVG background (subtle shapes) -->
+  <svg class="bg-decor" viewBox="0 0 1440 800" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="g1" x1="0" x2="1">
+        <stop offset="0" stop-color="#a5d8ff" stop-opacity="0.22"/>
+        <stop offset="1" stop-color="#ffd0b3" stop-opacity="0.06"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="1440" height="800" fill="url(#g1)"/>
+    <g transform="translate(-120, -40)" fill="#ffffff" opacity="0.35">
+      <ellipse cx="300" cy="120" rx="260" ry="80"/>
+      <ellipse cx="1200" cy="680" rx="380" ry="110"/>
+    </g>
+  </svg>
+
+  <div class="home-wrap" role="main">
+    <header class="home-header" role="banner">
+      <div class="brand">
+        <div class="home-logo" aria-hidden="true">
+          <!-- Logo image added here (uploaded file path). Replace src if you store it locally. -->
+          <img src="logo.jpg" alt="Rural Skill Connect logo" />
+
+        </div>
+        <div>
+          <h1 id="pageTitle" class="home-title">Rural Skill Connect</h1>
+          <div id="pageSubtitle" class="home-sub">Find Jobs • Post Skills • Earn Easily</div>
+        </div>
+      </div>
+
+      <div class="home-controls" role="navigation" aria-label="Top controls">
+        <button id="homeIndexBtn" class="btn ghost" onclick="location.href='index.html'">← Login</button>
+        <div style="display:flex; gap:8px;">
+          <button id="teluguBtn" class="lang-toggle">తెలుగు</button>
+          <button id="englishBtn" class="lang-toggle">English</button>
+        </div>
+      </div>
+    </header>
+
+  
+
+    <main>
+      <!-- HERO -->
+      <section class="hero fade-in" id="heroSection" aria-labelledby="heroTitle">
+        <div class="hero-left">
+          <div id="heroTitle" class="hero-title">Empowering local skills — fast, safe and reliable</div>
+          <div id="heroNote" class="hero-note">Discover trusted local workers, make secure calls with masked numbers, file complaints, and operate offline when needed. Clean UI and subtle animations for better usability.</div>
+        </div>
+
+        <div style="width:320px; text-align:right;">
+          <img id="heroImg" class="hero-img" src="https://via.placeholder.com/320x140?text=Rural+Skill+Connect" alt="" />
+        </div>
+      </section>
+
+      <div style="height:20px"></div>
+
+      <div class="home-grid">
+        <div id="forWorkersCard" class="home-card fade-in" tabindex="0" role="link" onclick="location.href='workers.html'">
+          <div class="card-emoji">👷‍♂️</div>
+          <div id="forWorkersLabel" class="card-label">For Workers</div>
+          <div id="forWorkersDesc" class="card-desc">Post your skills, manage jobs, view income and get government scheme help.</div>
+        </div>
+
+        <div id="forCustomersCard" class="home-card fade-in" tabindex="0" role="link" onclick="location.href='customers.html'">
+          <div class="card-emoji">🧑‍🌾</div>
+          <div id="forCustomersLabel" class="card-label">For Customers</div>
+          <div id="forCustomersDesc" class="card-desc">Post job requests, search local workers by skill & price, and manage payments securely.</div>
+        </div>
+
+        <div id="profileCard" class="home-card fade-in" tabindex="0" role="link" onclick="location.href='profile.html'">
+          <div class="card-emoji">👤</div>
+          <div id="profileLabel" class="card-label">Profile</div>
+          <div id="profileDesc" class="card-desc">View or edit your profile, skills, identity and payment settings.</div>
+        </div>
+
+        <div id="othersCard" class="home-card fade-in" tabindex="0" role="link" onclick="location.href='others.html'">
+          <div class="card-emoji">📣</div>
+          <div id="othersLabel" class="card-label">Others</div>
+          <div id="othersDesc" class="card-desc">Announcements, learn skills, smart match suggestions and offline drafts.</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Masked Call Modal (kept for shared use) -->
+  <div id="maskedModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="maskedTitle">
+    <div class="modal">
+      <h3 id="maskedTitle">Secure Call</h3>
+      <div id="maskedBody" style="font-size:14px; color:#475569;">Connecting via secure masked number. Your real number will not be revealed to the worker.</div>
+
+      <div class="row" style="justify-content:space-between; margin-top:14px;">
+        <div>
+          <div style="font-size:12px; color:#6b7280;">Masked number</div>
+          <div id="maskedToken" style="font-weight:900; color:#05204a; font-size:18px;">—</div>
+        </div>
+        <div style="text-align:right;">
+          <button id="closeMasked" class="btn ghost" style="background:transparent; color:#063b9a; border:1px solid rgba(6,30,76,0.06);">Close</button>
+          <button id="confirmMasked" class="btn" style="margin-left:8px;">Start Call</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complaint Modal (shared) -->
+  <div id="complaintModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="complaintTitle">
+    <div class="modal">
+      <h3 id="complaintTitle">File a Complaint</h3>
+      <div style="font-size:13px; color:#475569;">Please provide a short title and description. We will review and take action.</div>
+      <div class="row" style="margin-top:10px;">
+        <input id="complaintTitleInput" placeholder="Title" class="modal .input" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid rgba(2,36,85,0.06);" />
+      </div>
+      <div class="row">
+        <textarea id="complaintDescInput" placeholder="Description" rows="4" style="width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(2,36,85,0.06);"></textarea>
+      </div>
+      <div class="row" style="justify-content:flex-end;">
+        <button id="closeComplaint" class="btn ghost">Cancel</button>
+        <button id="submitComplaint" class="btn" style="margin-left:8px;">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastWrap" class="toast-wrap" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- shared translation module (must be present in js/ folder) -->
+  <script src="js/app.shared.js"></script>
+
+  <!-- Page-specific translation handler -->
+  <script>
+    (function(){
+      function applyHomeMappings(lang){
+        const mapping = {
+          en: {
+            forWorkersLabel: 'For Workers',
+            forWorkersDesc: 'Post your skills, manage jobs, view income and get government scheme help.',
+            forCustomersLabel: 'For Customers',
+            forCustomersDesc: 'Post job requests, search local workers by skill & price, and manage payments securely.',
+            profileLabel: 'Profile',
+            profileDesc: 'View or edit your profile, skills, identity and payment settings.',
+            othersLabel: 'Others',
+            othersDesc: 'Announcements, learn skills, smart match suggestions and offline drafts.',
+            pageSubtitle: 'Find Jobs • Post Skills • Earn Easily',
+            heroTitle: 'Empowering local skills — fast, safe and reliable'
+          },
+          te: {
+            forWorkersLabel: 'సేవలందించే వారు',
+            forWorkersDesc: 'మీ నైపుణ్యాలు పోస్ట్ చేయండి, పనుల్ని నిర్వహించండి, ఆదాయాన్ని చూడు మరియు ప్రభుత్వ పథకాల సహాయం పొందండి.',
+            forCustomersLabel: 'సేవ గ్రహీతలు',
+            forCustomersDesc: 'పని అవసరాలను పోస్ట్ చేయండి, కౌశల్యం మరియు ధర ప్రకారం స్థానిక పనివారిని వెతకండి, చెల్లింపులను భద్రంగా నిర్వహించండి.',
+            profileLabel: 'ప్రొఫైల్',
+            profileDesc: 'మీ ప్రొఫైల్, నైపుణ్యాలు, గుర్తింపు మరియు చెల్లింపు సెట్టింగులను చూడండి లేదా మార్చండి.',
+            othersLabel: 'ఇతరాలు',
+            othersDesc: 'ప్రకటనలు, నైపుణ్యాలు నేర్చుకోవడం, స్మార్ట్ మ్యాచ్ సూచనలు మరియు ఆఫ్‌లైన్ డ్రాఫ్ట్‌లు.',
+            pageSubtitle: 'ఉద్యోగాలు కనుగొనండి • నైపుణ్యాలు పోస్ట్ చేయండి • సులభంగా ఆదా చేయండి',
+            heroTitle: 'స్థానిక నైపుణ్యాలను శక్తివంతం చేయడం — వేగంగా, సురక్షితంగా మరియు నమ్మకంగా'
+          }
+        };
+        const map = mapping[lang] || mapping['en'];
+        Object.keys(map).forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.textContent = map[id];
+        });
+      }
+
+      window.onRscLangApplied = function(lang){ applyHomeMappings(lang); };
+
+      document.addEventListener('DOMContentLoaded', function(){
+        setTimeout(function(){
+          try {
+            const lang = (window.RSC && typeof window.RSC.getLang === 'function') ? window.RSC.getLang() : 'en';
+            applyHomeMappings(lang);
+          } catch(e){ console.warn('home mapping error', e); }
+        }, 250);
+      });
+    })();
+  </script>
+
+  <!-- Wiring script: offline queue, masked calls, toasts, animations (Top Matches removed) -->
+  <script>
+    (function(){
+      /* OFFLINE + MASKED helpers (kept for shared use) */
+      const OFFLINE_KEY = 'rsc_offline_v1';
+      const MASK_MAP_KEY = 'rsc_maskmap_v1';
+
+      function enqueueOffline(action){
+        const q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || '[]');
+        q.push({ ...action, createdAt: Date.now() });
+        localStorage.setItem(OFFLINE_KEY, JSON.stringify(q));
+        showToast('Saved offline — will sync when online', 'info');
+      }
+      function flushOffline(){
+        const q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || '[]');
+        if (!q.length) return;
+        console.log('Flushing offline queue', q);
+        localStorage.removeItem(OFFLINE_KEY);
+        showToast('Synced offline actions', 'success');
+      }
+      function generateMaskedNumber(realNumber){
+        const token = 'VM-' + Math.random().toString(36).slice(2,9).toUpperCase();
+        const m = JSON.parse(localStorage.getItem(MASK_MAP_KEY) || '{}');
+        m[token] = { real: realNumber, expiresAt: Date.now() + (24*60*60*1000) };
+        localStorage.setItem(MASK_MAP_KEY, JSON.stringify(m));
+        return token;
+      }
+
+      /* Toast helper */
+      function el(id){ return document.getElementById(id); }
+      function showToast(message, type){
+        const wrap = el('toastWrap');
+        if (!wrap) return;
+        const t = document.createElement('div');
+        t.className = 'toast';
+        if (type==='success') t.style.background = 'linear-gradient(90deg,#ecfdf5,#d1fae5)';
+        else if (type==='danger') t.style.background = 'linear-gradient(90deg,#fff1f2,#ffe4e6)';
+        else t.style.background = 'linear-gradient(90deg,#eef2ff,#f0f9ff)';
+        t.textContent = message;
+        wrap.appendChild(t);
+        setTimeout(()=> t.classList.add('show'), 20);
+        setTimeout(()=> { t.classList.remove('show'); setTimeout(()=> { try{ wrap.removeChild(t); }catch(e){} }, 360); }, 3200);
+      }
+
+      document.addEventListener('DOMContentLoaded', function(){
+        // hero & cards entrance
+        setTimeout(()=> {
+          document.getElementById('heroSection')?.classList?.add('show');
+          document.querySelectorAll('.fade-in').forEach((n,i)=> setTimeout(()=> n.classList.add('show'), 90*i));
+        }, 120);
+
+        // animate hero image
+        const heroImg = el('heroImg');
+        if (heroImg){ heroImg.style.animation = 'floaty 4.6s ease-in-out infinite'; }
+
+        // Masked modal controls (kept for when other pages open it)
+        el('closeMasked')?.addEventListener('click', ()=>{ el('maskedModal').classList.remove('show'); });
+        el('confirmMasked')?.addEventListener('click', ()=>{
+          const modal = el('maskedModal');
+          const wid = modal.dataset.workerId;
+          const masked = modal.dataset.masked;
+          const action = { type: 'call_request', workerId: wid, masked };
+          if (!navigator.onLine) { enqueueOffline(action); }
+          else { console.log('Call routed using masked token', action); showToast('Call initiated via masked connection', 'success'); }
+          modal.classList.remove('show');
+        });
+
+        // Complaint modal handlers (kept shared)
+        el('closeComplaint')?.addEventListener('click', ()=>{ el('complaintModal').classList.remove('show'); });
+        el('submitComplaint')?.addEventListener('click', ()=>{
+          const modal = el('complaintModal');
+          const against = modal.dataset.against || null;
+          const title = el('complaintTitleInput').value.trim();
+          const desc = el('complaintDescInput').value.trim();
+          if (!title || !desc){ showToast('Please provide title and description', 'danger'); return; }
+          const comp = { id:'c-'+Math.random().toString(36).slice(2,8), title, description:desc, against, createdAt:Date.now(), status:'open' };
+          if (!navigator.onLine){ enqueueOffline({ type:'complaint', payload:comp }); }
+          else { console.log('Complaint submitted', comp); showToast('Complaint submitted — admin will review', 'success'); }
+          const existing = JSON.parse(localStorage.getItem('rsc_demo_complaints')||'[]'); existing.push(comp); localStorage.setItem('rsc_demo_complaints', JSON.stringify(existing));
+          modal.classList.remove('show');
+        });
+
+        // language button wiring (safe)
+        function safeCall(fn){ if (window.RSC) return fn(); setTimeout(()=>{ if (window.RSC) fn(); }, 200); }
+        safeCall(()=> {
+          const tel = document.getElementById('teluguBtn');
+          const eng = document.getElementById('englishBtn');
+          if (tel) tel.addEventListener('click', ()=> { window.RSC.setLang('te'); });
+          if (eng) eng.addEventListener('click', ()=> { window.RSC.setLang('en'); });
+          try { window.RSC.applyLangToPage(); } catch(e){}
+        });
+
+        // network banner update (Online text removed — only dot when connected)
+        function updateNetwork(){
+          const banner = el('networkBanner');
+          const icon = el('networkIcon');
+          const text = el('networkText');
+          if (navigator.onLine){
+            banner.style.display='flex';
+            icon.style.color = 'var(--success)';
+            icon.textContent='●';
+            text.textContent = ''; // <-- removed "Online" word per request
+            setTimeout(()=> { banner.style.opacity = '1'; banner.style.transform = 'translateY(0)'; }, 20);
+            flushOffline();
+          } else {
+            banner.style.display='flex';
+            icon.style.color = 'var(--danger)';
+            icon.textContent='●';
+            text.textContent = 'Offline — actions saved locally';
+            setTimeout(()=> { banner.style.opacity = '1'; banner.style.transform = 'translateY(0)'; }, 20);
+            showToast('You are offline', 'danger');
+          }
+        }
+        window.addEventListener('online', updateNetwork);
+        window.addEventListener('offline', updateNetwork);
+        updateNetwork();
+
+        // accessibility: Enter key on cards
+        document.querySelectorAll('.home-card').forEach(c => {
+          c.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') c.click(); });
+        });
+
+      }); // DOMContentLoaded
+
+    })();
+  </script>
+
+</body>
+</html>

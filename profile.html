@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rural Skill Connect — Profile (Customer / Worker)</title>
+  <style>
+    :root{
+      --bg1: #f6fbff;
+      --bg2: #fff8f4;
+      --card: #ffffff;
+      --accent: #0b67ff;
+      --muted: #6b7280;
+      --shadow: 0 10px 30px rgba(11,67,120,0.08);
+      --radius: 12px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#0f172a}
+    .app{max-width:1200px;margin:28px auto;padding:22px}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .title{display:flex;align-items:center;gap:14px}
+    .logo{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#e6f2ff,#fff);box-shadow:0 4px 18px rgba(11,67,120,0.06)}
+    .title h1{margin:0;font-size:20px;color:#08427a}
+    .subtitle{margin:0;color:var(--muted);font-size:13px}
+
+    .top-actions{display:flex;gap:12px}
+    .btn{padding:10px 16px;border-radius:10px;border:1px solid transparent;background:var(--card);cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;border:1px solid #e6eefb;color:#0b67ff}
+    .btn.primary{background:var(--accent);color:#fff;box-shadow:0 8px 24px rgba(11,67,120,0.12)}
+    .tabs{display:flex;gap:8px}
+    .tab{padding:8px 12px;border-radius:10px;border:1px solid transparent;background:transparent;cursor:pointer}
+    .tab.active{background:linear-gradient(90deg,#e9f3ff,#f7fbff);border:1px solid rgba(11,103,255,0.12);font-weight:700}
+
+    .grid{display:grid;grid-template-columns:320px 1fr;gap:20px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .card.small-pad{padding:12px}
+    .account-card .avatar{width:120px;height:120px;border-radius:12px;background:linear-gradient(180deg,#efeefb,#fff);display:grid;place-items:center;font-size:48px;color:#5b21b6;margin-bottom:12px}
+    .avatar-row{display:flex;flex-direction:column;align-items:center}
+    .small{font-size:13px;color:var(--muted)}
+    .upload-row{display:flex;gap:8px;margin-top:8px}
+
+    label{display:block;font-weight:700;color:#08355a;margin-bottom:6px;font-size:13px}
+    input[type="text"],textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid #e9f0fb;background:linear-gradient(#fff,#fbfdff);box-sizing:border-box}
+    textarea{min-height:90px;resize:vertical}
+    .form-row{display:flex;gap:12px;align-items:flex-start}
+    .two{flex:1}
+    .muted-note{font-size:13px;color:var(--muted);text-align:right}
+
+    @media (max-width:900px){.grid{grid-template-columns:1fr;}.header{flex-direction:column;align-items:flex-start;gap:10px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title">
+        <div class="logo">🌾</div>
+        <div>
+          <h1>Profile</h1>
+          <p class="subtitle">Separate Customer and Worker pages — simplified</p>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="tabs" role="tablist">
+          <button class="tab active" id="tabCustomer">Customer</button>
+          <button class="tab" id="tabWorker">Worker</button>
+        </div>
+        <div class="top-actions">
+          <button class="btn ghost" id="homeBtn">← Home</button>
+          <button class="btn primary" id="saveBtn">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Left: Shared Account card -->
+      <div class="card account-card small-pad">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Account</strong>
+          <div style="font-size:13px;color:var(--muted)" id="currentRoleLabel">Customer</div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
+          <div class="avatar-row">
+            <div class="avatar" id="avatarPreview">👤</div>
+            <div class="upload-row">
+              <label for="photoInput" class="btn" style="padding:8px 10px;">Upload</label>
+              <input id="photoInput" type="file" accept="image/*" style="display:none">
+              <button class="btn" id="removePhoto">Remove</button>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div class="form-section">
+              <label>Full name</label>
+              <input type="text" id="fullname" placeholder="e.g. Ramesh Kumar">
+            </div>
+            <div class="form-section">
+              <label>Phone</label>
+              <input type="text" id="phone" placeholder="+91-9XXXXXXXXX">
+            </div>
+          </div>
+        </div>
+        <p class="small" style="margin-top:8px">A clear photo builds trust. We removed UPI / Portfolio / OTP options to keep profile simple.</p>
+      </div>
+
+      <!-- Right: Pages area (Customer / Worker) -->
+      <div>
+        <!-- Customer Page -->
+        <div class="card" id="customerPage">
+          <div style="display:flex;gap:16px;align-items:stretch">
+            <div style="flex:1">
+              <label>Short bio</label>
+              <textarea id="bioCustomer" placeholder="One-line: experience / core skill / availability"></textarea>
+            </div>
+            <div style="width:260px">
+              <label>Address</label>
+              <input type="text" id="addressCustomer" placeholder="Village / Landmark">
+              <div style="height:10px"></div>
+              <label>District</label>
+              <input type="text" id="districtCustomer" placeholder="e.g. East Godavari">
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>Customer — Preferences</strong>
+              <span class="muted-note">Shown only on Customer page</span>
+            </div>
+
+            <div class="prefs">
+              <div class="form-row">
+                <div class="two">
+                  <label>Interested services</label>
+                  <input type="text" id="servicesCustomer" placeholder="e.g. Home repair, Painting">
+                </div>
+                <div style="width:170px">
+                  <label>Preferred time</label>
+                  <select id="prefTimeCustomer">
+                    <option>Morning</option>
+                    <option>Afternoon</option>
+                    <option>Evening</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Worker Page -->
+        <div class="card" id="workerPage" style="display:none">
+          <div style="display:flex;gap:16px;align-items:stretch">
+            <div style="flex:1">
+              <label>Short bio</label>
+              <textarea id="bioWorker" placeholder="One-line: experience / core skill / availability"></textarea>
+              <div style="display:flex;gap:12px;margin-top:10px">
+                <div style="flex:1">
+                  <label>Core skill</label>
+                  <input type="text" id="skillWorker" placeholder="e.g. Electrician, Carpenter">
+                </div>
+                <div style="width:160px">
+                  <label>Experience</label>
+                  <input type="text" id="expWorker" placeholder="e.g. 3 years">
+                </div>
+              </div>
+            </div>
+            <div style="width:260px">
+              <label>Address</label>
+              <input type="text" id="addressWorker" placeholder="Village / Landmark">
+              <div style="height:10px"></div>
+              <label>District</label>
+              <input type="text" id="districtWorker" placeholder="e.g. East Godavari">
+            </div>
+          </div>
+
+          <div style="margin-top:12px;font-size:13px;color:var(--muted)">Worker profile contains core skill and experience fields. Customer preferences removed here.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabCustomer = document.getElementById('tabCustomer');
+    const tabWorker = document.getElementById('tabWorker');
+    const customerPage = document.getElementById('customerPage');
+    const workerPage = document.getElementById('workerPage');
+    const currentRoleLabel = document.getElementById('currentRoleLabel');
+
+    function activateCustomer(){
+      tabCustomer.classList.add('active');
+      tabWorker.classList.remove('active');
+      customerPage.style.display = 'block';
+      workerPage.style.display = 'none';
+      currentRoleLabel.textContent = 'Customer';
+    }
+    function activateWorker(){
+      tabWorker.classList.add('active');
+      tabCustomer.classList.remove('active');
+      customerPage.style.display = 'none';
+      workerPage.style.display = 'block';
+      currentRoleLabel.textContent = 'Worker';
+    }
+
+    tabCustomer.addEventListener('click', activateCustomer);
+    tabWorker.addEventListener('click', activateWorker);
+
+    // Home button: go back if possible, otherwise try index.html
+    document.getElementById('homeBtn').addEventListener('click', ()=>{
+      if(window.history.length > 1) window.history.back();
+      else window.location.href = '/home.html';
+    });
+
+    // single Save button collects data depending on active page
+    function gatherData(){
+      const base = {
+        fullname: document.getElementById('fullname').value,
+        phone: document.getElementById('phone').value,
+      };
+      if(tabCustomer.classList.contains('active')){
+        return Object.assign(base, {
+          role: 'Customer',
+          bio: document.getElementById('bioCustomer').value,
+          address: document.getElementById('addressCustomer').value,
+          district: document.getElementById('districtCustomer').value,
+          services: document.getElementById('servicesCustomer').value,
+          prefTime: document.getElementById('prefTimeCustomer').value
+        });
+      } else {
+        return Object.assign(base, {
+          role: 'Worker',
+          bio: document.getElementById('bioWorker').value,
+          address: document.getElementById('addressWorker').value,
+          district: document.getElementById('districtWorker').value,
+          skill: document.getElementById('skillWorker').value,
+          experience: document.getElementById('expWorker').value
+        });
+      }
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', ()=>{
+      const data = gatherData();
+      console.log('Profile save:', data);
+      alert('Profile saved (demo) — check console for JSON');
+    });
+
+    // photo upload preview
+    const photoInput = document.getElementById('photoInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const removePhoto = document.getElementById('removePhoto');
+    photoInput.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        avatarPreview.style.backgroundImage = `url(${ev.target.result})`;
+        avatarPreview.textContent = '';
+        avatarPreview.style.backgroundSize = 'cover';
+        avatarPreview.style.backgroundPosition = 'center';
+      }
+      reader.readAsDataURL(file);
+    });
+    removePhoto.addEventListener('click', ()=>{
+      avatarPreview.style.backgroundImage = '';
+      avatarPreview.textContent = '👤';
+      photoInput.value = '';
+    });
+
+    // keyboard shortcut: Ctrl+S to save (demo)
+    window.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){
+        e.preventDefault(); document.getElementById('saveBtn').click();
+      }
+    });
+  </script>
+</body>
+</html>
